@@ -182,8 +182,8 @@ def main(img1,img2):
         
     
 from PIL import Image
-image1 = "../img/Harimau4.jpg"
-image2 = "../img/Harimau5.jpg"
+image1 = "src/flask-app/bebek1.jpeg"
+image2 = "src/flask-app/bebek2.jpeg"
 main(image1,image2)
 # # gambar = segment_image_into_3x3(image1);
 # # print(calculate_histograms_for_blocks(image1))
