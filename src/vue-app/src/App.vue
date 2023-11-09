@@ -4,15 +4,14 @@
     <div class="flex gap-5">
       <img src="" alt="uploadedimage">
       <div >
-        <form action="">
+        <form action="http://127.0.0.1:5000/upload" method="POST" enctype="multipart/form-data">
           <div class="flex flex-col">
             <label for="image" class="bg-orange-500 px-3 py-1 rounded-md cursor-pointer">Image Input
-              <input type="file" id="image" name="image" accept="image/*" class="hidden">
+              <input type="file" id="image" name="image" accept="image/*">
             </label>
-    
             <label for="tipeCBIR">Color / Texture</label>
             <input type="checkbox" name="tipeCBIR" id="">
-            <button>Search</button>
+            <button type="submit" class="bg-orange-300 px-3 py-1">Search</button>
           </div>
         </form>
       </div>
