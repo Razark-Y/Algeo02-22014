@@ -45,15 +45,14 @@ def rgb_to_hsv(image):
     
     S = np.where(Cmax == 0, 0, delta / Cmax)
     V = Cmax
-
     return np.stack((H, S, V), axis=-1)
 
 def vector(image):
     image = np.array(image)
     HSVNumpy = rgb_to_hsv(image)
-    Hbin = np.array([(315,20),(20, 40), (40, 75), (75, 155), (155, 190), (190, 270), (270, 295), (295, 315)])
-    Sbin = np.array([(0, 0.2), (0.2, 0.7), (0.7, 1)])
-    Vbin = np.array([(0, 0.2), (0.2, 0.7), (0.7, 1)])
+    Hbin = np.array([(20, 40), (40, 75), (75, 155), (155, 190), (190, 270), (270, 295), (295, 315),(0,20),(315,360)])
+    Sbin = np.array([(0, 0.2), (0.2, 0.7), (0.7, 1.1)])
+    Vbin = np.array([(0, 0.2), (0.2, 0.7), (0.7, 1.1)])
     histogram = np.zeros((len(Hbin), len(Sbin), len(Vbin)), dtype=int)
 
     # Create masks for each bin
