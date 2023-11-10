@@ -47,16 +47,54 @@ def rgb_to_hsv(image):
     V = Cmax
     return np.stack((H, S, V), axis=-1)
 
+def compress_to_match(image_path1, image_path2):
+    # Load the images
+    image1 = Image.open(image_path1)
+    image2 = Image.open(image_path2)
+
+    # Get the file sizes
+    size1 = os.path.getsize(image_path1)
+    size2 = os.path.getsize(image_path2)
+
+    # Determine the target size (size of the smaller image)
+    target_size = min(size1, size2)
+
+    # Function to compress an image to the target size
+    def compress_image(image, target_size):
+        quality = 95  # Start with high quality
+        while True:
+            # Create a buffer to save the compressed image
+            compressed_image_io = io.BytesIO()
+            image.save(compressed_image_io, format='JPEG', quality=quality)
+            compressed_image_io.seek(0)
+
+            # Check the size of the compressed image
+            if compressed_image_io.tell() <= target_size or quality <= 10:
+                break
+
+            # Decrease the quality for further compression
+            quality -= 5
+
+        # Open the compressed image as a PIL Image
+        compressed_image_io.seek(0)
+        return Image.open(compressed_image_io)
+
+    # Compress both images to the target size
+    compressed_image1 = compress_image(image1, target_size)
+    compressed_image2 = compress_image(image2, target_size)
+
+    return compressed_image1, compressed_image2
+
 def vector(image):
     image = np.array(image)
     HSVNumpy = rgb_to_hsv(image)
-    Hbin = np.array([(20, 40), (40, 75), (75, 155), (155, 190), (190, 270), (270, 295), (295, 315),(0,20),(315,360)])
+    Hbin = np.array([(316, 360), (1, 26), (26, 41), (41, 121), (121, 191), (191, 271), (271, 295),(295,316)])
     Sbin = np.array([(0, 0.2), (0.2, 0.7), (0.7, 1.1)])
     Vbin = np.array([(0, 0.2), (0.2, 0.7), (0.7, 1.1)])
-    histogram = np.zeros((len(Hbin), len(Sbin), len(Vbin)), dtype=int)
+    histogram = np.zeros((len(Hbin), len(Sbin), len(Vbin)), dtype='int64')
 
     # Create masks for each bin
-    h_masks = [(Hbin[i][0] <= HSVNumpy[:, :, 0]) & (HSVNumpy[:, :, 0] < Hbin[i][1]) for i in range(len(Hbin))]
+    h_masks = [((Hbin[i][0] <= HSVNumpy[:, :, 0]) & (HSVNumpy[:, :, 0] < Hbin[i][1])) | (HSVNumpy[:, :, 0] == 0) if i == 0 else (Hbin[i][0] <= HSVNumpy[:, :, 0]) & (HSVNumpy[:, :, 0] < Hbin[i][1]) for i in range(len(Hbin))]
     s_masks = [(Sbin[j][0] <= HSVNumpy[:, :, 1]) & (HSVNumpy[:, :, 1] < Sbin[j][1]) for j in range(len(Sbin))]
     v_masks = [(Vbin[k][0] <= HSVNumpy[:, :, 2]) & (HSVNumpy[:, :, 2] < Vbin[k][1]) for k in range(len(Vbin))]
 
@@ -78,26 +116,25 @@ def main(img1,img2):
     res=0
     image1 = Image.open(img1)
     image2 = Image.open(img2)
+    # image1,image2 = compress_to_match(img1,img2)
     # image1 = image1.crop((0,0,100,200))
     # image2 = image2.crop((0,0,100,200))
     image1segment = segment_image_into_3x3(image1)
     image2segment = segment_image_into_3x3(image2)
     for i in range(9):
-        image1segment[i] = np.array(image1segment[i])
         # print(image1segment[i])
-        image2segment[i] = np.array(image2segment[i])
         # print(rgb_to_hsv(image1segment[i]))
         # print(rgb_to_hsv(image2segment[i]))
-        vector1 = vector(image1segment[i])
-        vector2 = vector(image2segment[i])
+        vector1 = vector(np.array(image1segment[i]))
+        vector2 = vector(np.array(image2segment[i]))
         # print(vector1)
         # print("=====================================")
         # print(vector2)
         similarity = cosine_similarity(vector1,vector2)
-        similarity *= 4 if i == 4 else 2 if i in (1, 7) else 1
+        similarity *= 4 if i == 4 else 2 if i in (1, 3,5,7) else 1
         # print(similarity)
         res = res+similarity
-    print(res/14*100)
+    print(res/16*100)
         
 # def rgb_of_pixel(image,x,y):
 #     r,g,b = image.getpixel((x,y))
@@ -181,8 +218,8 @@ def main(img1,img2):
         
     
 from PIL import Image
-image1 = "../img/Harimau4.jpg"
-image2 = "../img/Harimau5.jpg"
+image1 = "../img/Tes1.jpg"
+image2 = "../img/test2.jpg"
 main(image1,image2)
 # # gambar = segment_image_into_3x3(image1);
 # # print(calculate_histograms_for_blocks(image1))
