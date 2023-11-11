@@ -12,12 +12,13 @@ app.config['UPLOAD_FOLDER'] = "src/flask-app/uploads"
 
 @app.route('/uploadDB',methods=['POST'])
 def uploadDB():
-    if 'image' in request.files:
-        image = request.files['image']
+    if 'imageDB' in request.files:
+        image = request.files['imageDB']
         if image:
             filename = secure_filename(image.filename)
             filepath = os.path.join("src/vue-app/src/assets/img",filename)
             image.save(filepath)
+    return jsonify("upload berhasil!")
 
 @app.route('/uploadColor',methods=['POST','GET'])
 def cbir_color_list():
