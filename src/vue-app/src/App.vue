@@ -29,10 +29,18 @@
         </form>
       </div>
     </div>
+
     <div class="flex flex-row flex-wrap justify-center gap-8 mt-8">
-      <Gambar v-for="(value,key) in sortedImageData" :key="key" :img-json="value"></Gambar>
+      <Gambar v-for="(value,key) in pagedImageData[currentPage]" :key="key" :img-json="value"></Gambar>
     </div>
+
+    <div id="paginationbar" class="flex flex-row gap-10">
+      <div v-for="(value) in pagedImageData.length" key="value" class="hover:cursor-pointer" @click="changePage(value-1)">
+        {{ value }}
+      </div>
     </div>
+
+  </div>
 
 </template>
 
@@ -40,6 +48,7 @@
 import Gambar from "./components/gambar-viewer.vue"
 import axios from 'axios'
 import { ref,computed } from 'vue';
+const currentPage = ref(1);
 const tipeInput = ref('Color');
 const imageInput = ref([]);
 const imageData = ref([]);
@@ -54,15 +63,32 @@ function changeUrl() {
   }
 }
 
+function changePage(value) {
+  currentPage.value = value
+}
+
 // const sortedImageData = computed(() =>{
 //   // eslint-disable-next-line vue/no-side-effects-in-computed-properties
 //   return imageData.value.filter(obj => obj['similarity'] > 60).sort((a,b) => parseInt(b['similarity']) - parseInt(a['similarity']))
 // })
+
 const sortedImageData = computed(() =>{
   // eslint-disable-next-line vue/no-side-effects-in-computed-properties
   return imageData.value.sort((a,b) => parseInt(b['similarity']) - parseInt(a['similarity']))
 })
 
+const pagedImageData = computed(() => {
+  let data = [];
+  let subData = [];
+  for(let i = 0; i < sortedImageData.value.length; i++) {
+    subData.push(sortedImageData.value[i]);
+    if((i+1) % 3 == 0) {
+      data.push(subData);
+      subData = [];
+    }
+  }
+  return data
+})
 
 function changeListener(e) {
   imageInput.value = e.target.files[0];

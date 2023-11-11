@@ -17,6 +17,7 @@ def uploadDB():
         if image:
             filename = secure_filename(image.filename)
             filepath = os.path.join("src/vue-app/src/assets/img",filename)
+            image.save(filepath)
 
 @app.route('/uploadColor',methods=['POST','GET'])
 def cbir_color_list():
