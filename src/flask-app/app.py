@@ -16,6 +16,7 @@ def uploadDB():
         image = request.files['imageDB']
         if image:
             filename = secure_filename(image.filename)
+            filename.replace(" ","_")
             filepath = os.path.join("../vue-app/src/assets/img",filename)
             image.save(filepath)
     return jsonify("upload berhasil!")

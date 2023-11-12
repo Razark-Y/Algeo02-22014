@@ -1,10 +1,8 @@
 <template>
   <!-- 
 NOTE!!!
-PAS LAGI DI UPLOAD, BIKIN TOMBOLNYA DISABLED SEMUA!
-
- -->
-
+Pagination masih maksa
+-->
   <div class="flex flex-col justify-center items-center gap-8 mb-4 mt-5">
     <h1 class="font-bold text-3xl">Reverse Image Search</h1>
     <div class="flex gap-5">
@@ -54,9 +52,9 @@ PAS LAGI DI UPLOAD, BIKIN TOMBOLNYA DISABLED SEMUA!
             </div>
 
             <button
-              v-bind:disabled="!isButtonClickable"
+              v-bind:disabled="!isButtonClickable || isUploading"
               type="submit"
-              :class="{ disabled: !isButtonClickable }"
+              :class="{ disabled: !isButtonClickable || isUploading }"
               class="group relative h-12 w-48 overflow-hidden rounded-2xl bg-green-500 text-lg text-white font-bold text-whiteg-orange-300 px-3 py-1"
               @click.prevent="uploadFile"
             >
@@ -75,8 +73,8 @@ PAS LAGI DI UPLOAD, BIKIN TOMBOLNYA DISABLED SEMUA!
         <div class="flex flex-row gap-4 items-center h-fit">
           <button
             @click.prevent="uploadDB"
-            v-bind:disabled="!isButtonClickable"
-            :class="{ disabled: !isButtonClickable }"
+            v-bind:disabled="!isButtonClickable || isUploading"
+            :class="{ disabled: !isButtonClickable || isUploading }"
             class="px-4 py-2 bg-green-700 text-md text-white font-bold rounded-md hover:grayscale"
           >
             Upload Database
@@ -84,8 +82,8 @@ PAS LAGI DI UPLOAD, BIKIN TOMBOLNYA DISABLED SEMUA!
           <div
             v-if="!isHidden"
             id="statusLight"
-            class="w-4 h-4 rounded-full bg-green-400"
-            :class="{ 'bg-green-400': isUploaded, 'bg-yellow-400': !isUploaded }"
+            class="w-4 h-4 rounded-full "
+            :class="{ 'bg-green-400 animate-bounce': isUploaded, 'bg-yellow-400 animate-ping': !isUploaded }"
           ></div>
         </div>
       </form>
@@ -116,6 +114,7 @@ PAS LAGI DI UPLOAD, BIKIN TOMBOLNYA DISABLED SEMUA!
 import Gambar from './components/gambar-viewer.vue'
 import axios from 'axios'
 import { ref, computed } from 'vue'
+const isUploading = ref(false);
 const isButtonClickable = ref(false)
 const isHidden = ref(true)
 const isUploaded = ref(false)
@@ -176,6 +175,7 @@ function changeListener(e) {
 }
 
 const uploadFile = async () => {
+  isUploading.value = true;
   isHidden.value = false
   isUploaded.value = false
   const formData = new FormData()
@@ -192,9 +192,11 @@ const uploadFile = async () => {
   } catch (error) {
     console.error(error)
   }
+  isUploading.value = false;
 }
 
 const uploadDB = async () => {
+  isUploading.value = true;
   isHidden.value = false
   isUploaded.value = false
   const formData = new FormData()
@@ -211,6 +213,7 @@ const uploadDB = async () => {
   } catch (error) {
     console.error(error)
   }
+  isUploading.value = false;
 }
 
 // function getImages() {
