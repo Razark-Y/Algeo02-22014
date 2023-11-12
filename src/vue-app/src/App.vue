@@ -1,8 +1,4 @@
 <template>
-  <!-- 
-NOTE!!!
-Pagination masih maksa
--->
   <div class="flex flex-col justify-center items-center gap-8 mb-4 mt-5">
     <h1 class="font-bold text-3xl">Reverse Image Search</h1>
     <div class="flex gap-5">
@@ -97,7 +93,7 @@ Pagination masih maksa
       ></Gambar>
     </div>
 
-    <div id="paginationbar" class="flex flex-row flex-wrap gap-10">
+    <!-- <div id="paginationbar" class="flex flex-row flex-wrap gap-10">
       <div
         v-for="value in pagedImageData.length"
         :key="value"
@@ -106,11 +102,25 @@ Pagination masih maksa
       >
         {{ value }}
       </div>
-    </div>
+    </div> -->
+    <Paginate
+      v-if="pagedImageData.length != 0"
+      :page-count="pagedImageData.length"
+      :active-class="`text-yellow-600`"
+      :page-link-class="`px-3 py-6`"
+      :prev-link-class="`px-3 py-6`"
+      :next-link-class="`px-3 py-6`"
+      :click-handler="changePage"
+      :prev-text="'Prev'"
+      :next-text="'Next'"
+      :container-class="`flex flex-row gap-10`" 
+    >
+    </Paginate>
   </div>
 </template>
 
 <script setup>
+import Paginate from 'vuejs-paginate-next'
 import Gambar from './components/gambar-viewer.vue'
 import axios from 'axios'
 import { ref, computed } from 'vue'
@@ -134,14 +144,15 @@ function changeUrl() {
 }
 
 function changePage(value) {
-  currentPage.value = value
+  console.log(value)
+  currentPage.value = parseInt(value)-1
 }
 
 const sortedImageData = computed(() => {
   // eslint-disable-next-line vue/no-side-effects-in-computed-properties
   return imageData.value
     .filter((obj) => obj['similarity'] > 60)
-    .sort((a, b) => parseInt(b['similarity']) - parseInt(a['similarity']))
+    .sort((a, b) => parseFloat(b['similarity']) - parseFloat(a['similarity']))
 })
 
 // const sortedImageData = computed(() =>{
@@ -259,5 +270,17 @@ input:checked ~ .toggle-circle {
 }
 input:checked ~ .toggle-path {
   background-color: #81e6d9;
+}
+
+.page-item {
+  border: 1px solid blueviolet;
+  padding-top: .2em;
+  padding-bottom: .2em;
+  border-radius: 5px;
+}
+
+.page-item:hover {
+  cursor: pointer;
+  color: salmon;
 }
 </style>
