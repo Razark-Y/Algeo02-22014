@@ -20,9 +20,9 @@ pip install -u flask-cors
 ### Run
 Open two terminal and make sure the directory is set to ``Algeo02-22014``.
 
-In the first terminal, run *frontend.bat*.
+In the first terminal, run ``frontend.bat``.
 
-In the first terminal, run *backend.bat*.
+In the second terminal, run ``backend.bat``.
 
 Finally open ```http://localhost:5173/``` and you'll be good to go!
 
