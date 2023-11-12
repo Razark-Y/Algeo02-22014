@@ -4,24 +4,25 @@
 
 
 ## How to run this project?
-Make sure that your computer has npm installed. Change into vue-app directory and run the following line
-```
-npm install
-npm run format
-npm run dev
+### Setup
+Make sure that your computer has npm installed.
 
-```
 If you haven't already installed flask for python, run the following command
 ```
  pip install flask
  ```
 
-After that, open another terminal and change it to flask-app directory and run the following command.
+This project need CORS to be enabled. If you haven't installed flask_cors yet, run the following command
 ```
-python -u app.py
+pip install -u flask-cors
 ```
 
+### Run
+Open two terminal and make sure the directory is set to ``Algeo02-22014``.
 
+In the first terminal, run *frontend.bat*.
+
+In the first terminal, run *backend.bat*.
 
 Finally open ```http://localhost:5173/``` and you'll be good to go!
 

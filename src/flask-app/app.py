@@ -16,7 +16,7 @@ def uploadDB():
         image = request.files['imageDB']
         if image:
             filename = secure_filename(image.filename)
-            filepath = os.path.join("src/vue-app/src/assets/img",filename)
+            filepath = os.path.join("../vue-app/src/assets/img",filename)
             image.save(filepath)
     return jsonify("upload berhasil!")
 
@@ -27,12 +27,12 @@ def cbir_color_list():
         image = request.files['image']
         if image:
             filename = secure_filename(image.filename)
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'],filename)
+            # filepath = os.path.join(app.config['UPLOAD_FOLDER'],filename)
             # image.save(filepath)
-            for fileDB in os.listdir("src/vue-app/src/assets/img") :
+            for fileDB in os.listdir('../vue-app/src/assets/img') :
                 dataObject = {
                     'imageTitle': fileDB,
-                    'similarity': cbirColorCompare(image,"src/vue-app/src/assets/img/"+fileDB)
+                    'similarity': cbirColorCompare(image,'../vue-app/src/assets/img/'+fileDB)
                     # 'similarity': cbirColorCompare("src/flask-app/bandara.jpeg",fileDB)
                 }
                 data.append(dataObject)
@@ -45,12 +45,12 @@ def cbir_texture_list():
         image = request.files['image']
         if image:
             filename = secure_filename(image.filename)
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'],filename)
+            # filepath = os.path.join(app.config['UPLOAD_FOLDER'],filename)
             # image.save(filepath)
-            for fileDB in os.listdir("src/vue-app/src/assets/img") :
+            for fileDB in os.listdir('../vue-app/src/assets/img') :
                 dataObject = {
                     'imageTitle': fileDB,
-                    'similarity': compareImage(image,"src/vue-app/src/assets/img/"+fileDB)
+                    'similarity': compareImage(image,'../vue-app/src/assets/img/'+fileDB)
                     # 'similarity': cbirColorCompare("src/flask-app/bandara.jpeg",fileDB)
                 }
                 data.append(dataObject)
