@@ -1,72 +1,61 @@
-import numpy as np
-from PIL import Image
-import math as MATH
+import os
+import subprocess
 import time
+import numpy as np
 
-def RGBtoGrayscale(r, g, b) :
-    return np.round(0.2989*r + 0.587*g + 0.114*b)
+def writeCHE(path) :
+    subprocess.run(["cHub/getche.exe", path])
+    f = open("txt/CHEresult.txt", "r")
+    che = (f.read().strip()).split(" ")
 
-def RGBImagetoGrayscale(img) :
-    height, width = img.size
-    res = [[0 for i in range(width)] for i in range(height)]
-    for i in range(height) :
-        for j in range(width) :
-            r, g, b = img.getpixel((i, j))
-            res[i][j] += (RGBtoGrayscale(r, g, b))
-    return res
+    resF = open("txt/CHE.txt", "a")
+    resF.write(f'{che[0]} {che[1]} {che[2]} {path}\n')
 
-def constructCoOccurenceMatrix(img) :
-    GrayscaleMatrix = RGBImagetoGrayscale(img)
-    res = [[0 for i in range(256)] for i in range(256)]
-    for i in range(len(GrayscaleMatrix) - 1) :
-        for j in range(len(GrayscaleMatrix[0])) :
-            res[round(GrayscaleMatrix[i][j])][round(GrayscaleMatrix[i + 1][j])] += 1
-    return res
+def initializeDataset() :
+    resF = open("txt/CHE.txt", "w")
 
-def constructNormalizedOccMatrix(img) :
-    basicOcc = constructCoOccurenceMatrix(img)
-    res = [[0 for i in range(256)] for i in range(256)]
-    sum = 2 * (img.width - 1) * img.height
-    for i in range(256) :
-        for j in range(256) :
-            res[i][j] = (basicOcc[i][j] + basicOcc[j][i]) / sum
-    return res
+def processDataset(folder_path) :
+    dir_list = os.listdir(folder_path)
+    initializeDataset()
+    args = ["cHub/initializeDataset.exe"]
+    for i in dir_list :
+        args += [folder_path + "/" + i]
+    subprocess.run(args)
 
-def getContHomEnt(img) :
-    occ = constructNormalizedOccMatrix(img)
-    con = 0.0
-    hom = 0.0
-    ent = 0
-    for i in range(256) :
-        for j in range(256) :
-            el = occ[j][i]
-            con += el*((i - j)**2)
-            hom += el/(1 + ((i-j)**2))
-            if (el != 0) :
-                ent += el * -MATH.log(el, 2)
-    return (con, hom, ent)
+def cosineSimilarity(CHE1, CHE2) :
+    subprocess.run(["cHub/similarity.exe"] + CHE1 + CHE2)
+    f = open("txt/similarity.txt", "r")
+    sim = float(f.read())
+    return sim
 
-def cosineSimilarity(v1, v2) :
-    length1 = 0
-    length2 = 0
-    dotProduct = 0
+def compareImageWithDataset(path) :
+    subprocess.run(["cHub/compdataset.exe", path])
+    f = open("txt/comparedWithDataset.txt", "r")
+    result = f.read().split("\n")
+    result.pop()
+    for i in range(len(result)) :
+        result[i] = result[i].split(" ")
+        result[i][0] = float(result[i][0])
+    return result
 
-    for i in range(len(v1)) :
-        length1 += v1[i]**2
-        length2 += v2[i]**2
-        dotProduct += v1[i]*v2[i]
-
-    length1 = MATH.sqrt(length1)
-    length2 = MATH.sqrt(length2)
-    return abs(dotProduct/((length1)*(length2)))
-
-def printMatrix(matrix) :
-    for i in matrix :
-        for j in i :
-            print(j, end=" ")
-        print()
+def normalizeData(arr) :
+    similarity = [i[0] for i in arr]
+    path = [i[1] for i in arr]
+    top = max(similarity)
+    bottom = np.quantile(similarity, 0.25)
+    finaldata = [100*(i - bottom)/(top - bottom) for i in similarity]
+    return sorted([[finaldata[i], path[i]] for i in range(len(arr))], reverse=True)
 
 def compareImage(path1, path2) :
-    img1 = Image.open(path1).convert('RGB')
-    img2 = Image.open(path2).convert('RGB')
-    return cosineSimilarity(getContHomEnt(img1), getContHomEnt(img2))
+    subprocess.run(["cHub/comp2img.exe", path1, path2])
+    f = open("txt/CBIRTextureResult.txt", "r")
+    result = float(f.read())
+    return result
+
+# Cara Menggunakan Program dengan Dataset :
+# panggil processDataset(folder_path), dengan folder_path adalah path ke folder berisi dataset image
+# kemudian hasil perbandingan image dengan dataset dapat didapat dengan menggunakan
+# normalizeData(compareImageWithDataset(path_image)) dengan path_image adalah path menuju ke image yang
+# ingin dibandingkan dengan dataset,
+# hasil dari pemanggilan berupa array berisi pasangan [similarity_value, image_original] yang terurut
+# menurun berdasarkan similarity_value
