@@ -1,6 +1,7 @@
 import cv2 as cv
 import numpy as np
 import time
+from PIL import Image
 start = time.time()
 np.seterr(divide='ignore', invalid='ignore')
 
@@ -47,54 +48,18 @@ def rgb_to_hsv(image):
     V = Cmax
     return np.stack((H, S, V), axis=-1)
 
-def compress_to_match(image_path1, image_path2):
-    # Load the images
-    image1 = Image.open(image_path1)
-    image2 = Image.open(image_path2)
-
-    # Get the file sizes
-    size1 = os.path.getsize(image_path1)
-    size2 = os.path.getsize(image_path2)
-
-    # Determine the target size (size of the smaller image)
-    target_size = min(size1, size2)
-
-    # Function to compress an image to the target size
-    def compress_image(image, target_size):
-        quality = 95  # Start with high quality
-        while True:
-            # Create a buffer to save the compressed image
-            compressed_image_io = io.BytesIO()
-            image.save(compressed_image_io, format='JPEG', quality=quality)
-            compressed_image_io.seek(0)
-
-            # Check the size of the compressed image
-            if compressed_image_io.tell() <= target_size or quality <= 10:
-                break
-
-            # Decrease the quality for further compression
-            quality -= 5
-
-        # Open the compressed image as a PIL Image
-        compressed_image_io.seek(0)
-        return Image.open(compressed_image_io)
-
-    # Compress both images to the target size
-    compressed_image1 = compress_image(image1, target_size)
-    compressed_image2 = compress_image(image2, target_size)
-
-    return compressed_image1, compressed_image2
-
 def vector(image):
     image = np.array(image)
     HSVNumpy = rgb_to_hsv(image)
-    Hbin = np.array([(316, 360), (1, 26), (26, 41), (41, 121), (121, 191), (191, 271), (271, 295),(295,316)])
+    Hbin = np.array([(20, 40), (40, 75), (75, 155), (155, 190), (190, 270), (270, 295), (295, 315),(0,20),(315,360)])
+    # Hbin = np.array([(314, 360), (0, 25), (25, 40), (40, 120), (120, 190), (190, 270), (270, 295),(295,315)])
     Sbin = np.array([(0, 0.2), (0.2, 0.7), (0.7, 1.1)])
     Vbin = np.array([(0, 0.2), (0.2, 0.7), (0.7, 1.1)])
     histogram = np.zeros((len(Hbin), len(Sbin), len(Vbin)), dtype='int64')
 
     # Create masks for each bin
-    h_masks = [((Hbin[i][0] <= HSVNumpy[:, :, 0]) & (HSVNumpy[:, :, 0] < Hbin[i][1])) | (HSVNumpy[:, :, 0] == 0) if i == 0 else (Hbin[i][0] <= HSVNumpy[:, :, 0]) & (HSVNumpy[:, :, 0] < Hbin[i][1]) for i in range(len(Hbin))]
+    # h_masks = [(Hbin[i][0] <= HSVNumpy[:, :, 0]) & (HSVNumpy[:, :, 0] < Hbin[i][1]) for i in range(len(Hbin))]
+    h_masks = [(Hbin[i][0] <= HSVNumpy[:, :, 0]) & (HSVNumpy[:, :, 0] < Hbin[i][1]) for i in range(len(Hbin))]
     s_masks = [(Sbin[j][0] <= HSVNumpy[:, :, 1]) & (HSVNumpy[:, :, 1] < Sbin[j][1]) for j in range(len(Sbin))]
     v_masks = [(Vbin[k][0] <= HSVNumpy[:, :, 2]) & (HSVNumpy[:, :, 2] < Vbin[k][1]) for k in range(len(Vbin))]
 
@@ -106,127 +71,66 @@ def vector(image):
 
     return histogram.flatten()
 
-def cosine_similarity(vec_a, vec_b):
-    dot_product = np.dot(vec_a, vec_b)
-    norm_a = np.linalg.norm(vec_a)
-    norm_b = np.linalg.norm(vec_b)
-    return dot_product / (norm_a * norm_b)
+def manual_dot_product(vec_a, vec_b):
+    return np.sum(vec_a * vec_b)
 
-def main(img1,img2):
+def manual_norm(vec):
+    return np.sqrt(np.sum(vec * vec))
+
+def manual_cosine_similarity(vec_a, vec_b):
+    dot_product = manual_dot_product(vec_a, vec_b)
+    norm_a = manual_norm(vec_a)
+    norm_b = manual_norm(vec_b)
+    return dot_product / (norm_a * norm_b) if norm_a != 0 and norm_b != 0 else 0
+#Masukin vektor kesini buat perbandingan
+def calculate_weighted_cosine_similarity(histograms1, histograms2):
+    weights = [5 if i == 4 else 3 if i in (3, 5) else 1 for i in range(9)]
+    total_similarity = 0
+
+    for i in range(9):
+        similarity = manual_cosine_similarity(histograms1[i], histograms2[i])
+        weighted_similarity = similarity * weights[i]
+        total_similarity += weighted_similarity
+
+    return total_similarity / sum(weights)
+#Intinya run ini untuk image path buat dapetin vektor
+def create_histograms_for_segments(image_path):
+    image = Image.open(image_path)
+    segments = segment_image_into_3x3(image)
+    histograms = [vector(segment) for segment in segments]
+    return np.array(histograms)
+
+def cbirColorCompare(img1,img2):
     res=0
     image1 = Image.open(img1)
     image2 = Image.open(img2)
-    # image1,image2 = compress_to_match(img1,img2)
     # image1 = image1.crop((0,0,100,200))
     # image2 = image2.crop((0,0,100,200))
     image1segment = segment_image_into_3x3(image1)
     image2segment = segment_image_into_3x3(image2)
     for i in range(9):
+        image1segment[i] = np.array(image1segment[i])
         # print(image1segment[i])
+        image2segment[i] = np.array(image2segment[i])
         # print(rgb_to_hsv(image1segment[i]))
         # print(rgb_to_hsv(image2segment[i]))
-        vector1 = vector(np.array(image1segment[i]))
-        vector2 = vector(np.array(image2segment[i]))
+        vector1 = vector(image1segment[i])
+        vector2 = vector(image2segment[i])
         # print(vector1)
         # print("=====================================")
         # print(vector2)
         similarity = cosine_similarity(vector1,vector2)
-        similarity *= 4 if i == 4 else 2 if i in (1, 3,5,7) else 1
+        similarity *= 4 if i == 3 else 2 if i in (1,7) else 1
         # print(similarity)
         res = res+similarity
-    print(res/16*100)
-        
-# def rgb_of_pixel(image,x,y):
-#     r,g,b = image.getpixel((x,y))
-#     return r/255,g/255,b/255
-# def extract_HSV(R, G, B):
-#     Cmax, Cmin = max(R, G, B), min(R, G, B)
-#     delta = Cmax - Cmin
-#     H = 0 if delta == 0 else (
-#         60 * (
-#             (G - B) / delta % 6 if Cmax == R else
-#             (B - R) / delta + 2 if Cmax == G else
-#             (R - G) / delta + 4
-#         )
-#     )
-#     S = 0 if Cmax == 0 else delta / Cmax
-#     V = Cmax
-#     return [H, S, V]
+    print(res/14*100)     
+    return(res/14*100)     
 
-# def dot_product(v1, v2):
-#     return sum(a * b for a, b in zip(v1, v2))
-
-# def magnitude(v):
-#     return sum(a * a for a in v) ** 0.5
-
-# def cosine_similarity(v1, v2):
-#     dot_prod = dot_product(v1, v2)    
-#     mag_v1 = magnitude(v1)
-#     mag_v2 = magnitude(v2)
-#     if mag_v1 == 0 or mag_v2 == 0:
-#         return None
-#     return dot_prod / (mag_v1 * mag_v2)
-
-# def find_bin_index(value, bins):
-#     for i, (start, end) in enumerate(bins):
-#         if start <= value < end:
-#             return i
-#     return -1
-
-
-# def calculate_histograms_for_blocks(segments):
-#     H_bins = [(0, 40), (40, 80), (80, 120), (120, 160), (200, 240), (280, 320), (320, 360)]
-#     S_bins = [(0, 0.6), (0.6, 1.3), (1.3, 2)]
-#     V_bins = [(0, 0.6), (0.6, 1.3), (1.3, 2)]
-#     combinations = [(h, s, v) for h in H_bins for s in S_bins for v in V_bins]
-#     histogram = [0] * len(combinations)
-#     for y in range(segments.size[1]):
-#         for z in range(segments.size[0]): 
-#             R,G,B = rgb_of_pixel(segments,z,y)
-#             input_H,input_S,input_V = extract_HSV(R,G,B)
-#             H_index = find_bin_index(input_H, H_bins)
-#             S_index = find_bin_index(input_S, S_bins)
-#             V_index = find_bin_index(input_V, V_bins)
-#             if H_index != -1 and S_index != -1 and V_index != -1:
-#                 combined_index = combinations.index((H_bins[H_index], S_bins[S_index], V_bins[V_index]))
-#             else:
-#                 combined_index = -1 
-#             if combined_index != -1:
-#                 histogram[combined_index] += 1
-#     return histogram
-
-# def BlockCBIR(img_path,img_path2):
-#     similaritytable = []
-#     image1 = Image.open(img_path)
-#     image2 = Image.open(img_path2)
-#     # image1segment = segment_image_into_3x3(image1)
-#     # image2segment = segment_image_into_3x3(image2)
-#     # for x in range(9):
-#     # segment1 = image1segment[x]
-#     # segment2 = image2segment[x]
-#     # Vector1 = calculate_histograms_for_blocks(segment1)
-#     # Vector2 = calculate_histograms_for_blocks(segment2)
-#     Vector1 = calculate_histograms_for_blocks(image1)
-#     Vector2 = calculate_histograms_for_blocks(image2)
-#     similarity = cosine_similarity(Vector1,Vector2)
-#     # similarity *= 3 if x == 4 else 2 if x in (1, 7) else 1
-#     # similaritytable.append(similarity)
-#     # endresult = (sum(similaritytable)/13)*100
-#     # print(endresult)
-#     # print(similaritytable)
-#     print(similarity)
-        
-    
-from PIL import Image
-image1 = "../img/Tes1.jpg"
-image2 = "../img/test2.jpg"
-main(image1,image2)
-# # gambar = segment_image_into_3x3(image1);
-# # print(calculate_histograms_for_blocks(image1))
-# BlockCBIR(image1,image2)
+image1 = "img/Harimau4.jpg"
+image2 = "img/Harimau5.jpg"
+# cbirColorCompare(image1,image2)
+vector_result = create_histograms_for_segments(image1)
+vector2_result = create_histograms_for_segments(image2)
+print(calculate_weighted_cosine_similarity(vector_result, vector2_result))
 end = time.time()
 print(end-start)
-# # image1 = Image.open(image1)
-# # segment = segment_image_into_3x3(image1)
-# # segments = segment[4]
-# # segments.show()
