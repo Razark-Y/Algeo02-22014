@@ -1,0 +1,10 @@
+{simlarity} {result[i]][3]} {result[j][3]}
+{simlarity} {result[i]][3]} {result[j][3]}
+{simlarity} {result[i]][3]} {result[j][3]}
+{simlarity} {result[i]][3]} {result[j][3]}
+{simlarity} {result[i]][3]} {result[j][3]}
+{simlarity} {result[i]][3]} {result[j][3]}
+{simlarity} {result[i]][3]} {result[j][3]}
+{simlarity} {result[i]][3]} {result[j][3]}
+{simlarity} {result[i]][3]} {result[j][3]}
+{simlarity} {result[i]][3]} {result[j][3]}
