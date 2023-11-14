@@ -1,4 +1,6 @@
 <template>
+  <!-- NOTE! -->
+  <!-- UPLOAD DATABASE HARUS FOLDER -->
   <div class="flex flex-col justify-center items-center gap-8 mb-4 mt-5">
     <h1 class="font-bold text-3xl">Reverse Image Search</h1>
     <div class="flex gap-5">
@@ -75,11 +77,17 @@
           >
             Upload Database
           </button>
+          <div>
+            {{ formattedElapsedTime }}
+          </div>
           <div
             v-if="!isHidden"
             id="statusLight"
-            class="w-4 h-4 rounded-full "
-            :class="{ 'bg-green-400 animate-bounce': isUploaded, 'bg-yellow-400 animate-ping': !isUploaded }"
+            class="w-4 h-4 rounded-full"
+            :class="{
+              'bg-green-400': isUploaded,
+              'bg-yellow-400 animate-ping': !isUploaded
+            }"
           ></div>
         </div>
       </form>
@@ -93,16 +101,6 @@
       ></Gambar>
     </div>
 
-    <!-- <div id="paginationbar" class="flex flex-row flex-wrap gap-10">
-      <div
-        v-for="value in pagedImageData.length"
-        :key="value"
-        class="hover:cursor-pointer hover:scale-125"
-        @click="changePage(value - 1)"
-      >
-        {{ value }}
-      </div>
-    </div> -->
     <Paginate
       v-if="pagedImageData.length != 0"
       :page-count="pagedImageData.length"
@@ -113,7 +111,7 @@
       :click-handler="changePage"
       :prev-text="'Prev'"
       :next-text="'Next'"
-      :container-class="`flex flex-row gap-10`" 
+      :container-class="`flex flex-row gap-10`"
     >
     </Paginate>
   </div>
@@ -124,7 +122,8 @@ import Paginate from 'vuejs-paginate-next'
 import Gambar from './components/gambar-viewer.vue'
 import axios from 'axios'
 import { ref, computed } from 'vue'
-const isUploading = ref(false);
+// const autoStart = ref(false)
+const isUploading = ref(false)
 const isButtonClickable = ref(false)
 const isHidden = ref(true)
 const isUploaded = ref(false)
@@ -134,6 +133,9 @@ const imageInput = ref([])
 const imageData = ref([])
 const imageURL = ref()
 const urlToSend = ref('http://127.0.0.1:5000/uploadColor')
+// const stopwatch = useStopwatch(false)
+const elapsedTime = ref(0);
+const timer = ref(undefined);
 
 function changeUrl() {
   if (tipeInput.value === true) {
@@ -145,7 +147,7 @@ function changeUrl() {
 
 function changePage(value) {
   console.log(value)
-  currentPage.value = parseInt(value)-1
+  currentPage.value = parseInt(value) - 1
 }
 
 const sortedImageData = computed(() => {
@@ -154,11 +156,6 @@ const sortedImageData = computed(() => {
     .filter((obj) => obj['similarity'] > 60)
     .sort((a, b) => parseFloat(b['similarity']) - parseFloat(a['similarity']))
 })
-
-// const sortedImageData = computed(() =>{
-//   // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-//   return imageData.value.sort((a,b) => parseInt(b['similarity']) - parseInt(a['similarity']))
-// })
 
 const pagedImageData = computed(() => {
   let data = []
@@ -186,7 +183,9 @@ function changeListener(e) {
 }
 
 const uploadFile = async () => {
-  isUploading.value = true;
+  resetTimer();
+  timerStart();
+  isUploading.value = true
   isHidden.value = false
   isUploaded.value = false
   const formData = new FormData()
@@ -203,11 +202,14 @@ const uploadFile = async () => {
   } catch (error) {
     console.error(error)
   }
-  isUploading.value = false;
+  stopTimer();
+  isUploading.value = false
 }
 
 const uploadDB = async () => {
-  isUploading.value = true;
+  resetTimer();
+  timerStart();
+  isUploading.value = true
   isHidden.value = false
   isUploaded.value = false
   const formData = new FormData()
@@ -224,31 +226,31 @@ const uploadDB = async () => {
   } catch (error) {
     console.error(error)
   }
-  isUploading.value = false;
+  isUploading.value = false
+  stopTimer();
 }
 
-// function getImages() {
-//   fetch("http://127.0.0.1:5000/upload")
-//   .then(response => response.json())
-//   .then((data) => {
-//     imageData.value = data;
-//     console.log(data)
-//     // console.log("Image:")
-//     // console.log(imageData.value)
-//   })
-// }
+const formattedElapsedTime = computed(()=>{
+    const date = new Date(null)
+    date.setSeconds(elapsedTime.value / 1000);
+    const utc = date.toUTCString();
+    return utc.substr(utc.indexOf(":") - 2, 8);
+})
 
-// watch(imageData,(newValue) =>{
-//   imageData.value = newValue;
-// });
+function timerStart() {
+    timer.value = setInterval(() => {
+        elapsedTime.value += 1000;
+    },1000)
+}
 
-// function getImageURL(name) {
-//   return new URL(`./assets/img/${name["imageTitle"]}`,import.meta.url).href
-// }
+function stopTimer() {
+    clearInterval(timer.value)
+}
 
-// onMounted(() =>{
-//   getImages()
-// })
+function resetTimer() {
+    elapsedTime.value = 0
+}
+
 </script>
 
 <style scope>
@@ -274,8 +276,8 @@ input:checked ~ .toggle-path {
 
 .page-item {
   border: 1px solid blueviolet;
-  padding-top: .2em;
-  padding-bottom: .2em;
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
   border-radius: 5px;
 }
 
