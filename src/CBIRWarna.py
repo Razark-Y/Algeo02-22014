@@ -51,15 +51,15 @@ def rgb_to_hsv(image):
 def vector(image):
     image = np.array(image)
     HSVNumpy = rgb_to_hsv(image)
-    Hbin = np.array([(20, 40), (40, 75), (75, 155), (155, 190), (190, 270), (270, 295), (295, 315),(0,20),(315,360)])
-    # Hbin = np.array([(314, 360), (0, 25), (25, 40), (40, 120), (120, 190), (190, 270), (270, 295),(295,315)])
+    # Hbin = np.array([(20, 40), (40, 75), (75, 155), (155, 190), (190, 270), (270, 295), (295, 315),(0,20),(315,360)])
+    Hbin = np.array([(316, 360), (1, 26), (26, 41), (41, 121), (121, 191), (191, 271), (271, 295),(295,316)])
     Sbin = np.array([(0, 0.2), (0.2, 0.7), (0.7, 1.1)])
     Vbin = np.array([(0, 0.2), (0.2, 0.7), (0.7, 1.1)])
     histogram = np.zeros((len(Hbin), len(Sbin), len(Vbin)), dtype='int64')
 
     # Create masks for each bin
     # h_masks = [(Hbin[i][0] <= HSVNumpy[:, :, 0]) & (HSVNumpy[:, :, 0] < Hbin[i][1]) for i in range(len(Hbin))]
-    h_masks = [(Hbin[i][0] <= HSVNumpy[:, :, 0]) & (HSVNumpy[:, :, 0] < Hbin[i][1]) for i in range(len(Hbin))]
+    h_masks = [((Hbin[i][0] <= HSVNumpy[:, :, 0]) & (HSVNumpy[:, :, 0] < Hbin[i][1])) | (HSVNumpy[:, :, 0] == 0) if i == 0 else (Hbin[i][0] <= HSVNumpy[:, :, 0]) & (HSVNumpy[:, :, 0] < Hbin[i][1]) for i in range(len(Hbin))]
     s_masks = [(Sbin[j][0] <= HSVNumpy[:, :, 1]) & (HSVNumpy[:, :, 1] < Sbin[j][1]) for j in range(len(Sbin))]
     v_masks = [(Vbin[k][0] <= HSVNumpy[:, :, 2]) & (HSVNumpy[:, :, 2] < Vbin[k][1]) for k in range(len(Vbin))]
 
@@ -92,7 +92,7 @@ def calculate_weighted_cosine_similarity(histograms1, histograms2):
         weighted_similarity = similarity * weights[i]
         total_similarity += weighted_similarity
 
-    return total_similarity / sum(weights)
+    return total_similarity / sum(weights) *100
 #Intinya run ini untuk image path buat dapetin vektor
 def create_histograms_for_segments(image_path):
     image = Image.open(image_path)
@@ -104,6 +104,8 @@ def cbirColorCompare(img1,img2):
     res=0
     image1 = Image.open(img1)
     image2 = Image.open(img2)
+    image1 = image1.convert('RGB')
+    image2 = image2.convert('RGB')
     # image1 = image1.crop((0,0,100,200))
     # image2 = image2.crop((0,0,100,200))
     image1segment = segment_image_into_3x3(image1)
@@ -119,18 +121,22 @@ def cbirColorCompare(img1,img2):
         # print(vector1)
         # print("=====================================")
         # print(vector2)
-        similarity = cosine_similarity(vector1,vector2)
+        similarity = manual_cosine_similarity(vector1,vector2)
         similarity *= 4 if i == 3 else 2 if i in (1,7) else 1
         # print(similarity)
         res = res+similarity
     print(res/14*100)     
     return(res/14*100)     
 
-image1 = "img/Harimau4.jpg"
-image2 = "img/Harimau5.jpg"
+image1 = "img/Harimau1.jpg"
+image2 = "img/Harimau2.jpg"
 # cbirColorCompare(image1,image2)
 vector_result = create_histograms_for_segments(image1)
 vector2_result = create_histograms_for_segments(image2)
 print(calculate_weighted_cosine_similarity(vector_result, vector2_result))
+# image1 = Image.open(image1)
+# image1 = image1.convert('RGB')
+# print(np.array(image1))
+# print(rgb_to_hsv(image2))
 end = time.time()
 print(end-start)
