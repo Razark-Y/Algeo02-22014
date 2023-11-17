@@ -1,6 +1,5 @@
 <template>
-  <div class="flex flex-col justify-center items-center gap-8 mb-4 mt-5">
-    <h1 class="font-bold text-3xl">Reverse Image Search</h1>
+  <div class="flex flex-col justify-center items-center gap-8 mb-4 mt-24">
     <div class="flex gap-5">
       <label
         class="bg-slate-400 w-60 h-40 bg-cover bg-center rounded-sm shadow-xl flex justify-center items-center hover:cursor-pointer hover:scale-105"
@@ -16,7 +15,7 @@
           class="hidden"
           @change="changeListenerAnImage"
         />
-        <div v-if="!imageURL">Inset Image Here!</div>
+        <div v-if="!imageURL" class="font-semibold text-white">Click Me!</div>
       </label>
       <div>
         <form method="POST" enctype="multipart/form-data">

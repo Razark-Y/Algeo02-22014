@@ -5,6 +5,7 @@ from CBIRWarna import *
 from CBIRTekstur import compareImage
 from util import deleteFolderContent
 from io import BytesIO
+from scrapper import scrape_images
 import os
 import base64
 from PIL import Image
@@ -28,6 +29,14 @@ def uploadDB():
             filepath = os.path.join(app.config['DB_FOLDER'],filename)
             file.save(filepath)
     return jsonify("Congrats!")
+
+@app.route('/uploadScrap',methods=['POST'])
+def uploadScrap():
+    url = request.json['string']
+    print(url)
+    deleteFolderContent("../vue-app/src/assets/img")
+    scrape_images(url,"../vue-app/src/assets/img")
+    return jsonify({'status': 'Succes'})
 
 @app.route('/uploadColor',methods=['POST','GET'])
 def cbir_color_list():

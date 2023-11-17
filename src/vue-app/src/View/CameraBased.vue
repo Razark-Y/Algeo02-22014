@@ -1,6 +1,5 @@
 <template>
-  <div class="flex flex-col justify-center items-center gap-8 mb-4 mt-5">
-    <h1 class="font-bold text-3xl">Reverse Image Search</h1>
+  <div class="flex flex-col justify-center items-center gap-8 mb-4 mt-24">
     <div class="flex gap-5">
       <div>
         <video ref="video" autoplay playsinline webkit-playsinline muted hidden></video>
@@ -10,7 +9,7 @@
         <form method="POST" enctype="multipart/form-data">
           <div class="flex flex-col items-center">
             <div class="flex flex-col justify-end mb-3">
-              <label for="toogleButton" class="flex flex-col gap-1 items-center cursor-pointer">
+              <!-- <label for="toogleButton" class="flex flex-col gap-1 items-center cursor-pointer">
                 <div v-if="!tipeInput" class="px-2 font-thin">Color</div>
                 <div v-else class="px-2 font-thin">Texture</div>
                 <div class="relative">
@@ -26,7 +25,7 @@
                     class="toggle-circle absolute w-3.5 h-3.5 bg-white rounded-full shadow inset-y-0 left-0"
                   ></div>
                 </div>
-              </label>
+              </label> -->
             </div>
           </div>
         </form>
@@ -60,9 +59,23 @@
           >
             Upload Database
           </button>
-          <div>
-            {{ formattedElapsedTime }}
-          </div>
+          <label for="toogleButton" class="flex flex-col gap-1 items-center cursor-pointer">
+                <div v-if="!tipeInput" class="px-2 font-thin">Color</div>
+                <div v-else class="px-2 font-thin">Texture</div>
+                <div class="relative">
+                  <input
+                    @click="changeUrl"
+                    id="toogleButton"
+                    type="checkbox"
+                    class="hidden"
+                    v-model="tipeInput"
+                  />
+                  <div class="toggle-path bg-yellow-400 w-9 h-5 rounded-full shadow-inner"></div>
+                  <div
+                    class="toggle-circle absolute w-3.5 h-3.5 bg-white rounded-full shadow inset-y-0 left-0"
+                  ></div>
+                </div>
+              </label>
           <div
             v-if="!isHidden"
             id="statusLight"
@@ -106,7 +119,7 @@ import Paginate from 'vuejs-paginate-next'
 import Gambar from '../components/gambar-viewer.vue'
 import axios from 'axios'
 // import Camera from '../components/Camera-Feed.vue'
-import { ref,computed,onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 //   import type { InstanceType } from 'vue'
 
 // STATE
@@ -117,8 +130,6 @@ const isHidden = ref(true)
 const isUploaded = ref(false)
 const currentPage = ref(0)
 const tipeInput = ref(false)
-const elapsedTime = ref(0)
-const timer = ref(undefined)
 const urlToSend = ref('http://127.0.0.1:5000/uploadColorCamera')
 const isDB = ref(false)
 const isINPT = ref(false)
@@ -143,7 +154,7 @@ function changePage(value) {
 const sortedImageData = computed(() => {
   // eslint-disable-next-line vue/no-side-effects-in-computed-properties
   return imageData.value
-    // .filter((obj) => obj['similarity'] > 60)
+    .filter((obj) => obj['similarity'] > 60)
     .sort((a, b) => parseFloat(b['similarity']) - parseFloat(a['similarity']))
 })
 
@@ -165,7 +176,6 @@ const pagedImageData = computed(() => {
   return data
 })
 
-
 function changeListenerFolder(e) {
   isError.value = false
   isINPT.value = false
@@ -180,8 +190,6 @@ function changeListenerFolder(e) {
 }
 
 const uploadDB = async () => {
-  resetTimer()
-  timerStart()
   isUploading.value = true
   isHidden.value = false
   isUploaded.value = false
@@ -206,86 +214,64 @@ const uploadDB = async () => {
   }
   // }
   isUploading.value = false
-  stopTimer()
-}
-
-const formattedElapsedTime = computed(() => {
-  const date = new Date(null)
-  date.setSeconds(elapsedTime.value / 1000)
-  const utc = date.toUTCString()
-  return utc.substr(utc.indexOf(':') - 2, 8)
-})
-
-function timerStart() {
-  timer.value = setInterval(() => {
-    elapsedTime.value += 1000
-  }, 1000)
-}
-
-function stopTimer() {
-  clearInterval(timer.value)
-}
-
-function resetTimer() {
-  elapsedTime.value = 0
 }
 
 const canvas = ref(null)
-const video = ref(null);
-const ctx = ref(null);
+const video = ref(null)
+const ctx = ref(null)
 
 const constraints = ref({
   audio: false,
-  video: {width: 300, height:200}
+  video: { width: 300, height: 200 }
 })
 
-
 function SetStream(stream) {
-  video.value.srcObject = stream;
-  video.value.play();
+  video.value.srcObject = stream
+  video.value.play()
 
-  requestAnimationFrame(Draw);
+  requestAnimationFrame(Draw)
 }
 
 function Draw() {
-  ctx.value.drawImage(video.value,0,0,canvas.value.width,canvas.value.height)
+  ctx.value.drawImage(video.value, 0, 0, canvas.value.width, canvas.value.height)
 
-  requestAnimationFrame(Draw);
+  requestAnimationFrame(Draw)
 }
 
-const TakePicture = async ()=> {
+const TakePicture = async () => {
   // Convert the base64 string to binary data
-  const imageBase64 = canvas.value.toDataURL();
+  const imageBase64 = canvas.value.toDataURL()
   const base64 = imageBase64.split(',')[1]
-  console.log(base64);
+  console.log(base64)
   // Send the FormData object to the Flask endpoint with Axios
-  axios.post(urlToSend.value, { file:imageBase64})
-  .then((response) => {
-    imageData.value = response.data;
-    console.log(response.data);
-  }).catch((error) => {
-    console.log(error);
-  });
+  axios
+    .post(urlToSend.value, { file: imageBase64 })
+    .then((response) => {
+      imageData.value = response.data
+      console.log(response.data)
+    })
+    .catch((error) => {
+      console.log(error)
+    })
 }
 
-onMounted(async() => {
-  if(video.value && canvas.value) {
-    ctx.value = canvas.value.getContext("2d");
+onMounted(async () => {
+  if (video.value && canvas.value) {
+    ctx.value = canvas.value.getContext('2d')
 
     await navigator.mediaDevices
       .getUserMedia(constraints.value)
       .then(SetStream)
-      .catch(e =>{
+      .catch((e) => {
         console.error(e)
       })
   }
 })
 
-onMounted(() =>{
-  console.log("KIRIM");
-  setInterval(TakePicture,3000);
+onMounted(() => {
+  console.log('KIRIM')
+  setInterval(TakePicture, 3000)
 })
-
 </script>
 
 <style scope>
