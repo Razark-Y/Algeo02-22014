@@ -1,4 +1,3 @@
-
 # def uploadDB():
 #     if 'image' in request.files:
 #         image = request.files['image']

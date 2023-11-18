@@ -6,6 +6,7 @@ from CBIRTekstur import compareImage
 from util import deleteFolderContent
 from io import BytesIO
 from scrapper import scrape_images
+from multiprocessing import Pool
 import os
 import base64
 from PIL import Image

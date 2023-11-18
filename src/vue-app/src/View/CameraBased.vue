@@ -60,22 +60,22 @@
             Upload Database
           </button>
           <label for="toogleButton" class="flex flex-col gap-1 items-center cursor-pointer">
-                <div v-if="!tipeInput" class="px-2 font-thin">Color</div>
-                <div v-else class="px-2 font-thin">Texture</div>
-                <div class="relative">
-                  <input
-                    @click="changeUrl"
-                    id="toogleButton"
-                    type="checkbox"
-                    class="hidden"
-                    v-model="tipeInput"
-                  />
-                  <div class="toggle-path bg-yellow-400 w-9 h-5 rounded-full shadow-inner"></div>
-                  <div
-                    class="toggle-circle absolute w-3.5 h-3.5 bg-white rounded-full shadow inset-y-0 left-0"
-                  ></div>
-                </div>
-              </label>
+            <div v-if="!tipeInput" class="px-2 font-thin">Color</div>
+            <div v-else class="px-2 font-thin">Texture</div>
+            <div class="relative">
+              <input
+                @click="changeUrl"
+                id="toogleButton"
+                type="checkbox"
+                class="hidden"
+                v-model="tipeInput"
+              />
+              <div class="toggle-path bg-yellow-400 w-9 h-5 rounded-full shadow-inner"></div>
+              <div
+                class="toggle-circle absolute w-3.5 h-3.5 bg-white rounded-full shadow inset-y-0 left-0"
+              ></div>
+            </div>
+          </label>
           <div
             v-if="!isHidden"
             id="statusLight"

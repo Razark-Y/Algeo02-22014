@@ -10,15 +10,14 @@
       <div>
         <b>Content-based image retrieval (CBIR)</b> is a powerful technique that allows users to
         search for digital images in large databases based on the contents of the images
-        themselves.<br /><br /><b>CBIR</b> analyzes the contents of an image, such as colors, shapes,
-        and textures, rather than relying on metadata such as keywords, tags, or descriptions
-        associated with the image.
+        themselves.<br /><br /><b>CBIR</b> analyzes the contents of an image, such as colors,
+        shapes, and textures, rather than relying on metadata such as keywords, tags, or
+        descriptions associated with the image.
       </div>
-      <router-link
-        to="/ImageBased"
-        class="flex"
-      >
-        <div class="bg-indigo-400 rounded-sm px-6 py-2 mt-5 text-white hover:cursor-pointer hover:scale-105">
+      <router-link to="/ImageBased" class="flex">
+        <div
+          class="bg-indigo-400 rounded-sm px-6 py-2 mt-5 text-white hover:cursor-pointer hover:scale-105"
+        >
           Get Started
         </div>
       </router-link>
