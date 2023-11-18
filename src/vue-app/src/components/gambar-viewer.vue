@@ -24,7 +24,7 @@ defineProps({
 })
 
 function getImageURL(name) {
-  return new URL(`../assets/img/${name}`, import.meta.url).href
+  return new URL(`../../../flask-app/database/${name}`, import.meta.url).href
 }
 </script>
 

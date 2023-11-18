@@ -17,13 +17,14 @@ app = Flask(__name__)
 CORS(app,supports_credentials=True) 
 app.config["DEBUG"] = True
 app.config['UPLOAD_FOLDER'] = "uploads"
-app.config['DB_FOLDER'] = "../vue-app/src/assets/img"
+# app.config['DB_FOLDER'] = "../vue-app/src/assets/img"
+app.config['DB_FOLDER'] = "database"
 
 # Router for Database Upload
 @app.route('/uploadDB',methods=['POST'])
 def uploadDB():
     folder = request.files.getlist('files')
-    deleteFolderContent("../vue-app/src/assets/img")
+    deleteFolderContent("database")
     for file in folder:
         if file:
             filename = secure_filename(file.filename)
@@ -37,8 +38,8 @@ def uploadDB():
 def uploadScrap():
     url = request.json['string']
     print(url)
-    deleteFolderContent("../vue-app/src/assets/img")
-    scrape_images(url,"../vue-app/src/assets/img")
+    deleteFolderContent("database")
+    scrape_images(url,"database")
     return jsonify({'status': 'Succes'})
 
 # Router for CBIR - Colour
@@ -50,8 +51,8 @@ def cbir_color_list():
         imageinput_result = create_histograms_for_segments(image)
         if image:
             filename = secure_filename(image.filename)
-            for fileDB in os.listdir('../vue-app/src/assets/img') :
-                imageDB_result = create_histograms_for_segments("../vue-app/src/assets/img/"+fileDB)
+            for fileDB in os.listdir('database') :
+                imageDB_result = create_histograms_for_segments("database/"+fileDB)
                 dataObject = {
                     'imageTitle': fileDB,
                     'similarity': calculate_weighted_cosine_similarity(imageinput_result,imageDB_result)
@@ -69,8 +70,8 @@ def cbir_color_list_camera():
     imgdata = base64.b64decode(base64_list[1])
     img = (BytesIO(imgdata))
     imageinput_result = create_histograms_for_segments(img)
-    for fileDB in os.listdir('../vue-app/src/assets/img') :
-        imageDB_result = create_histograms_for_segments("../vue-app/src/assets/img/"+fileDB)
+    for fileDB in os.listdir('database') :
+        imageDB_result = create_histograms_for_segments("database/"+fileDB)
         dataObject = {
             'imageTitle': fileDB,
             'similarity': calculate_weighted_cosine_similarity(imageinput_result,imageDB_result)
@@ -88,10 +89,10 @@ def cbir_texture_list():
             filename = secure_filename(image.filename)
             filepath = os.path.join(app.config['UPLOAD_FOLDER'],filename)
             image.save(filepath)
-            for fileDB in os.listdir('../vue-app/src/assets/img') :
+            for fileDB in os.listdir('database') :
                 dataObject = {
                     'imageTitle': fileDB,
-                    'similarity': float(compareImage(filepath,'../vue-app/src/assets/img/'+fileDB)) * 100
+                    'similarity': float(compareImage(filepath,'database/'+fileDB)) * 100
                 }
                 data.append(dataObject)
     return jsonify(data)
@@ -105,10 +106,10 @@ def cbir_texture_list_camera():
     imgdata = base64.b64decode(base64_list[1])
     img = Image.open(BytesIO(imgdata))
     img.save("uploads/gambarTemp.png")
-    for fileDB in os.listdir('../vue-app/src/assets/img') :
+    for fileDB in os.listdir('database') :
         dataObject = {
             'imageTitle': fileDB,
-            'similarity': float(compareImage("uploads/gambarTemp.png",'../vue-app/src/assets/img/'+fileDB)) * 100
+            'similarity': float(compareImage("uploads/gambarTemp.png",'database/'+fileDB)) * 100
         }
         data.append(dataObject)
     os.remove("uploads/gambarTemp.png")
