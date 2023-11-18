@@ -5,7 +5,12 @@ module.exports = {
     "./src/**/*.{vue,js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily:{
+        Merriweather:"'Merriweather',serif",
+        Gillsans:"'Gill Sans MT',serif"
+      }
+    },
   },
   plugins: [],
 }

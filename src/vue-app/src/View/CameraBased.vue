@@ -8,8 +8,7 @@
       <div>
         <form method="POST" enctype="multipart/form-data">
           <div class="flex flex-col items-center">
-            <div class="flex flex-col justify-end mb-3">
-            </div>
+            <div class="flex flex-col justify-end mb-3"></div>
           </div>
         </form>
       </div>
