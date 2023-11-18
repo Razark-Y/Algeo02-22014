@@ -1,24 +1,25 @@
-from flask import Flask,request,json,jsonify,url_for,session
+from flask import Flask,request,jsonify
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
-from CBIRWarna import *
-from CBIRTekstur import compareImage
-from util import deleteFolderContent
 from io import BytesIO
-from scrapper import scrape_images
-from multiprocessing import Pool
 import os
 import base64
 from PIL import Image
-import zipfile
 
+# Import library buatan
+from util import deleteFolderContent
+from CBIRTekstur import compareImage
+from CBIRWarna import *
+from scrapper import scrape_images
+
+# Flask Setup
 app = Flask(__name__)
 CORS(app,supports_credentials=True) 
 app.config["DEBUG"] = True
 app.config['UPLOAD_FOLDER'] = "uploads"
 app.config['DB_FOLDER'] = "../vue-app/src/assets/img"
-# app.config['MAX_CONTENT_LENGTH'] = 500 * 1024 * 1024
 
+# Router for Database Upload
 @app.route('/uploadDB',methods=['POST'])
 def uploadDB():
     folder = request.files.getlist('files')
@@ -29,8 +30,9 @@ def uploadDB():
             filename = filename.replace(" ","_")
             filepath = os.path.join(app.config['DB_FOLDER'],filename)
             file.save(filepath)
-    return jsonify("Congrats!")
+    return jsonify({'status': 'Succes'})
 
+# Router for Scrapper
 @app.route('/uploadScrap',methods=['POST'])
 def uploadScrap():
     url = request.json['string']
@@ -39,6 +41,7 @@ def uploadScrap():
     scrape_images(url,"../vue-app/src/assets/img")
     return jsonify({'status': 'Succes'})
 
+# Router for CBIR - Colour
 @app.route('/uploadColor',methods=['POST','GET'])
 def cbir_color_list():
     data = []
@@ -48,7 +51,6 @@ def cbir_color_list():
         if image:
             filename = secure_filename(image.filename)
             for fileDB in os.listdir('../vue-app/src/assets/img') :
-                # fileDBPath = '../vue-app/src/assets/img/'+fileDB
                 imageDB_result = create_histograms_for_segments("../vue-app/src/assets/img/"+fileDB)
                 dataObject = {
                     'imageTitle': fileDB,
@@ -57,20 +59,16 @@ def cbir_color_list():
                 data.append(dataObject)
     return jsonify(data)
 
+# Router for CBIR - Colour with Camera Feed
 @app.route('/uploadColorCamera',methods=['POST','GET'])
 def cbir_color_list_camera():
     print("tes kamera")
     data = []
-    # Get the image data from the request
     base64_string = request.json['file']
-
     base64_list = base64_string.split(',')
-    # decoded_data = base64.urlsafe_b64decode(base64_string + '=' * (-len(base64_string) % 4))
     imgdata = base64.b64decode(base64_list[1])
     img = (BytesIO(imgdata))
     imageinput_result = create_histograms_for_segments(img)
-    # # if image:
-    # #     filename = secure_filename(image.filename)
     for fileDB in os.listdir('../vue-app/src/assets/img') :
         imageDB_result = create_histograms_for_segments("../vue-app/src/assets/img/"+fileDB)
         dataObject = {
@@ -80,6 +78,7 @@ def cbir_color_list_camera():
         data.append(dataObject)
     return jsonify(data)
 
+# Router for CBIR - Texture
 @app.route('/uploadTexture',methods=['POST','GET'])
 def cbir_texture_list():
     data = []
@@ -97,14 +96,12 @@ def cbir_texture_list():
                 data.append(dataObject)
     return jsonify(data)
 
+# Router for CBIR - Texture with Camera Feed
 @app.route('/uploadTextureCamera',methods=['POST','GET'])
 def cbir_texture_list_camera():
     data = []
-    # Get the image data from the request
     base64_string = request.json['file']
-
     base64_list = base64_string.split(',')
-    # decoded_data = base64.urlsafe_b64decode(base64_string + '=' * (-len(base64_string) % 4))
     imgdata = base64.b64decode(base64_list[1])
     img = Image.open(BytesIO(imgdata))
     img.save("uploads/gambarTemp.png")
@@ -117,4 +114,5 @@ def cbir_texture_list_camera():
     os.remove("uploads/gambarTemp.png")
     return jsonify(data)
 
+# Menjalankan aplikasi flask
 app.run()

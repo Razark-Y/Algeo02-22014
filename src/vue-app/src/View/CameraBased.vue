@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col justify-center items-center gap-8 mb-4 mt-24">
     <div class="flex gap-5">
-      <div>
+      <div class="overflow-clip">
         <video ref="video" autoplay playsinline webkit-playsinline muted hidden></video>
         <canvas ref="canvas" width="300" height="200" class="bg-black rounded-3xl"></canvas>
       </div>
@@ -9,23 +9,6 @@
         <form method="POST" enctype="multipart/form-data">
           <div class="flex flex-col items-center">
             <div class="flex flex-col justify-end mb-3">
-              <!-- <label for="toogleButton" class="flex flex-col gap-1 items-center cursor-pointer">
-                <div v-if="!tipeInput" class="px-2 font-thin">Color</div>
-                <div v-else class="px-2 font-thin">Texture</div>
-                <div class="relative">
-                  <input
-                    @click="changeUrl"
-                    id="toogleButton"
-                    type="checkbox"
-                    class="hidden"
-                    v-model="tipeInput"
-                  />
-                  <div class="toggle-path bg-yellow-400 w-9 h-5 rounded-full shadow-inner"></div>
-                  <div
-                    class="toggle-circle absolute w-3.5 h-3.5 bg-white rounded-full shadow inset-y-0 left-0"
-                  ></div>
-                </div>
-              </label> -->
             </div>
           </div>
         </form>
@@ -116,7 +99,7 @@
 
 <script setup>
 import Paginate from 'vuejs-paginate-next'
-import Gambar from '../components/gambar-viewer.vue'
+// import Gambar from '../components/gambar-viewer.vue'
 import axios from 'axios'
 // import Camera from '../components/Camera-Feed.vue'
 import { ref, computed, onMounted } from 'vue'
@@ -152,7 +135,6 @@ function changePage(value) {
 }
 
 const sortedImageData = computed(() => {
-  // eslint-disable-next-line vue/no-side-effects-in-computed-properties
   return imageData.value
     .filter((obj) => obj['similarity'] > 60)
     .sort((a, b) => parseFloat(b['similarity']) - parseFloat(a['similarity']))

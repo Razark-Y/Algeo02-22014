@@ -51,9 +51,3 @@ def scrape_images(url, save_folder):
             image_url = src if src.startswith('http') else url + src
             base_filename = f"image_{idx}"
             download_image(image_url, save_folder, base_filename)
-        
-
-# Usage example
-url = 'https://wisuda-april2023-frontend.vercel.app/AboutUs'
-save_folder = 'downloaded_images'
-scrape_images(url, save_folder)
