@@ -85,33 +85,21 @@ def calculate_weighted_cosine_similarity(histograms1, histograms2):
     print(total_similarity / sum(weights) *100)
     return total_similarity / sum(weights) *100
 
-def createHistogram(json_file,image_path):
-    with open(json_file, 'r') as file:
-        data = json.load(file)
-    if not data:
-        # print("kosong")
-        histogram= create_histograms_for_segments(image_path)
-        results = {
+
+def caching(data,image_path):
+    for entry in data:
+        if entry["image_path"] == image_path:
+            return np.array(entry["image_vectors"])   
+def createHistogram(data, image_path):
+    histogram = create_histograms_for_segments(image_path)
+    results = {
         "image_path": image_path,
         "image_vectors": numpy_array_to_list(histogram)
-        }
-        json_file_path = json_file
-        append_to_json(json_file_path, results)
-        return histogram
-    for entry in data:
-        # print("Entry:",entry["image_path"])
-        if entry["image_path"] == image_path:
-            # print("Sudah ada")
-            return np.array(entry["image_vectors"])
-    # print("gada")
-    histogram= create_histograms_for_segments(image_path)
-    results = {
-    "image_path": image_path,
-    "image_vectors": numpy_array_to_list(histogram)
     }
-    json_file_path = json_file
-    append_to_json(json_file_path, results)
+    # append_to_json('cache.json', results)
+
     return histogram
+
 
 
 
@@ -131,25 +119,33 @@ def read_vectorJSON(file_path, index):
         else:
             print("Index out of range.")
             return None
-def append_to_json(file_path, new_data):
-    if os.path.exists(file_path):
-        with open(file_path, 'r') as json_file:
-            data = json.load(json_file)
-        data.append(new_data)
-    else:
-        data = [new_data]
-    with open(file_path, 'w') as json_file:
-        json.dump(data, json_file, indent=4)
+def append_to_json(json_file_path, data):
+    # Append data to a JSON file
+    try:
+        with open(json_file_path, 'r+') as file:
+            file_data = json.load(file)
+            file_data.append(data)
+            file.seek(0)
+            json.dump(file_data, file, indent=4)
+    except json.JSONDecodeError:
+        # If the file is empty, write a new JSON array
+        with open(json_file_path, 'w') as file:
+            json.dump([data], file, indent=4)
 #Pakai ini kalau dataset beda, jadi jsonnya di clear dulu biar ga overload
 def clear_json(file_path):
     with open(file_path, 'w') as json_file:
         json_file.write('[]')
 # clear_json('similarity_results.json')
 #Testing
-# image1 = "img/Harimau3.jpg"
-# image2 = "img/Harimau1.jpg"
-# vector_result = createHistogram('vector.json',image1)
-# vector2_result = createHistogram('vector.json',image2)
+image1 = "Testing_139.jpg"
+image2 = "Testing_142.jpg"
+with open('cache.json', 'r') as file:
+    try:
+        data = json.load(file)
+    except json.JSONDecodeError:
+        data = []
+vector_result = createHistogram(data,image1)
+vector2_result = createHistogram(data,image2)
 
 # Just in case mau panggil ulang, tinggal np.array dari fungsi si read_vectorJSON)
 # vector2_result = np.array(read_vectorJSON('similarity_results.json',0))
