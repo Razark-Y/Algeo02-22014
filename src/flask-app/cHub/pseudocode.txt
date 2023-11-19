@@ -1,0 +1,152 @@
+function RGBtoGrayscale(integer R, integer G, integer B) -> integer
+    -> 0.299*R + 0.587*G + 0.114*B
+
+procedure constructCoOccurenceMatrix(input image data[0..3*x*y - 1], 
+input integer x, input integer y, output array of integer result[0..256*256 - 1])
+
+    integer i, j, firstId, secondId
+
+    i traversal[0..255]
+        j traversal[0..255]
+            result[256*i + j] = 0
+
+    i traversal[0..y-1]
+        j traversal[0..x-2]
+            integer firstId = RGBtoGrayscale(
+                data[3*(i*x + j) + 0],
+                data[3*(i*x + j) + 1],
+                data[3*(i*x + j) + 2]
+            )
+            integer secondId = RGBtoGrayscale(
+                data[3*(i*x + j + 1) + 0],
+                data[3*(i*x + j + 1) + 1],
+                data[3*(i*x + j + 1) + 2]
+            )
+            result[256*firstId + secondId] += 1
+        
+
+procedure constructNormalizedOccMatrix(input : image data[0..3*x*y - 1], 
+input : integer x, input : integer y, output : array of integer result[0..256*256 - 1])
+
+    array of integer occMatrix[65536]
+    constructCoOccurenceMatrix(img, x, y, occMatrix)
+
+    real sum = 2 * (x - 1) * y
+
+    integer i, j
+    i traversal[0..255]
+        j traversal[0.255]
+            result[256*i + j] =(occMatrix[256*i + j] + occMatrix[256*j + i])/sum
+
+
+void getCHE(input : image img, input : integer x, input : integer y,
+output : real C, output : real H, output : real E)
+    occMatrix[65536]
+    constructNormalizedOccMatrix(img, x, y, occMatrix)
+    int i, j
+    real el
+    C = 0
+    H = 0
+    E = 0
+    i traversal[0..255]
+        j traversal[0..255]
+            el = occMatrix[256*i + j]
+            C += el*(i - j)*(i - j)
+            H += el/(1 + ((i-j)*(i - j)))
+            if (el != 0) then
+                E += el * -log2(el)
+
+function cosineSimilarity(real v1, real v2, int n) -> real
+    real length1 = 0
+    real length2 = 0
+    real dotProduct = 0
+
+    int i
+    i traversal[0..n-1]
+        length1 += v1[i]*v1[i]
+        length2 += v2[i]*v2[i]
+        dotProduct += v1[i]*v2[i]
+
+    length1 = sqrt(length1)
+    length2 = sqrt(length2)
+    
+    -> dotProduct/(length1*length2)
+
+function compareImage(input : string path1, input : string path2) -> real
+    integer x1, y1, n1
+    integer x2, y2, n2
+    image *data1 = stbi_load(path1, &x1, &y1, &n1, 1)
+    image *data2 = stbi_load(path2, &x2, &y2, &n2, 1)
+    array of real v1[3]
+    array of real v2[3]
+    getCHE(data1, x1, y1, v1[0], v1[1], v1[2])
+    getCHE(data2, x2, y2, v2[0], v2[1], v2[2])
+    stbi_image_free(data1)
+    stbi_image_free(data2)
+    -> cosineSimilarity(v1, v2, 3)
+
+procedure initializeDataset(String folder_path)
+    FILE fp
+    String output1
+    integer x1, y1, n1
+    array of real v1[3]
+
+    fp = open("txt/CHE.txt", write)
+
+    DIRECTORY dp   
+
+    dp = opendir (folder_path)
+    while (nextFileExist) do
+        String file_path
+
+        image data1 = stbi_load(file_path, x1, y1, n1, 3)
+        getCHE(data1, x1, y1, v1[0], v1[1], v1[2])
+        write(fp, C, H, E, file_path)
+        stbi_image_free(data1)
+
+    close(dp)
+
+
+function compareWithDataset(image) -> array of (real, file_path)
+    FILE fp
+    String output1
+    integer x1, y1, n1
+    array of real v1[3]
+
+    fp = open("txt/CHE.txt", write)
+
+    DIRECTORY dp   
+
+    dp = opendir (folder_path)
+    while (nextFileExist) do
+        String file_path
+
+        image data1 = stbi_load(file_path, x1, y1, n1, 3)
+        getCHE(data1, x1, y1, v1[0], v1[1], v1[2])
+        write(fp, C, H, E, file_path)
+        stbi_image_free(data1)
+
+    close(dp)
+
+    FILE fp
+    String output1
+    integer x1, y1, n1
+    array of real v1[3]
+    image data1 = stbi_load(file_path, x1, y1, n1, 3)
+    getCHE(data1, x1, y1, v1[0], v1[1], v1[2])
+
+    fp = open("txt/comparedWithDataset.txt", write)
+
+    FILE fds
+    String line
+    integer len = 0
+
+    array of real v2[3]
+    String filename[300]
+
+    fds = fopen("txt/CHE.txt", read)
+
+    while (nextLineExist)
+        getValue(real, real, real, String , v2[0], v2[1], v2[2], filename)
+        real similarity = cosineSimilarity(v1, v2, 3)
+        write(fds, similarity, filename)
