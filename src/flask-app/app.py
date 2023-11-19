@@ -98,7 +98,7 @@ def cbir_texture_list():
             arrData = compareImageWithDataset(filepath.replace("\\","/"))
             print(arrData)
             for (similarity,name) in arrData :
-                with open(name,'rb') as f:
+                with open("database/"+name,'rb') as f:
                     image_data = f.read()
                     base64_data = base64.b64encode(image_data).decode('utf-8')
                     dataObject = {

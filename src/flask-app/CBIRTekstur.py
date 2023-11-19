@@ -15,11 +15,9 @@ def initializeDataset() :
     resF = open("txt/CHE.txt", "w")
 
 def processDataset(folder_path) :
-    dir_list = os.listdir(folder_path)
     initializeDataset()
     args = ["cHub/initializeDataset.exe"]
-    for i in dir_list :
-        args += [folder_path + "/" + i]
+    args += [folder_path]
     subprocess.run(args)
 
 def cosineSimilarity(CHE1, CHE2) :
@@ -51,6 +49,8 @@ def compareImage(path1, path2) :
     f = open("txt/CBIRTextureResult.txt", "r")
     result = float(f.read())
     return result
+
+processDataset("reasonableArt")
 
 # Cara Menggunakan Program dengan Dataset :
 # panggil processDataset(folder_path), dengan folder_path adalah path ke folder berisi dataset image

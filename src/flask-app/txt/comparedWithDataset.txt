@@ -1,6 +1,6 @@
-0.982019 database/aldidpp_WIN_20230726_15_11_09_Pro_0.jpg
-0.872871 database/aldidpp_WIN_20231117_15_52_05_Pro_0.jpg
-0.797433 database/aldidpp_WIN_20231117_15_52_07_Pro_0.jpg
-0.910100 database/aldidpp_WIN_20231117_15_52_12_Pro_0.jpg
-0.923992 database/aldidpp_WIN_20231117_15_52_18_Pro_0.jpg
-0.900049 database/aldidpp_WIN_20231117_15_52_19_Pro_0.jpg
+0.965400 aldidpp_WIN_20230726_15_11_09_Pro_0.jpg
+0.998522 aldidpp_WIN_20231117_15_52_05_Pro_0.jpg
+0.982056 aldidpp_WIN_20231117_15_52_07_Pro_0.jpg
+0.999656 aldidpp_WIN_20231117_15_52_12_Pro_0.jpg
+0.998249 aldidpp_WIN_20231117_15_52_18_Pro_0.jpg
+1.000000 aldidpp_WIN_20231117_15_52_19_Pro_0.jpg

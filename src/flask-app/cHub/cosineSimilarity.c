@@ -38,7 +38,7 @@ int main(int argc, char *argv[] ){
 
     double res = cosineSimilarity(v1, v2, 3);
 
-    snprintf(output, 10, "%f", res);
+    snprintf(output, 15, "%f", res);
     fp = fopen("txt/similarity.txt", "w");
     fprintf(fp, output);
 }

@@ -27,6 +27,10 @@ void printMatrix(unsigned char *data, int x, int y){
     }
 }
 
+int RGBtoGrayscale(int R, int G, int B){
+    return (int)(0.299*(double)R + 0.587*(double)G + 0.114*(double)B);
+}
+
 void constructCoOccurenceMatrix(unsigned char* data, int x, int y, unsigned int* result){
 
     int i, j;
@@ -39,8 +43,16 @@ void constructCoOccurenceMatrix(unsigned char* data, int x, int y, unsigned int*
 
     for(i = 0; i < y; i++){
         for(j = 0; j < x - 1; j++){
-            int firstId = data[i*x + j];
-            int secondId = data[i*x + j + 1];
+            int firstId = RGBtoGrayscale(
+                data[3*(i*x + j) + 0],
+                data[3*(i*x + j) + 1],
+                data[3*(i*x + j) + 2]
+            );
+            int secondId = RGBtoGrayscale(
+                data[3*(i*x + j + 1) + 0],
+                data[3*(i*x + j + 1) + 1],
+                data[3*(i*x + j + 1) + 2]
+            );
             result[256*firstId + secondId] += 1;
         }
     }

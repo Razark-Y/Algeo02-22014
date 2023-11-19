@@ -28,6 +28,10 @@ void printMatrix(unsigned char *data, int x, int y){
     }
 }
 
+int RGBtoGrayscale(int R, int G, int B){
+    return (int)(0.299*(double)R + 0.587*(double)G + 0.114*(double)B);
+}
+
 void constructCoOccurenceMatrix(unsigned char* data, int x, int y, unsigned int* result){
 
     int i, j;
@@ -40,8 +44,16 @@ void constructCoOccurenceMatrix(unsigned char* data, int x, int y, unsigned int*
 
     for(i = 0; i < y; i++){
         for(j = 0; j < x - 1; j++){
-            int firstId = data[i*x + j];
-            int secondId = data[i*x + j + 1];
+            int firstId = RGBtoGrayscale(
+                data[3*(i*x + j) + 0],
+                data[3*(i*x + j) + 1],
+                data[3*(i*x + j) + 2]
+            );
+            int secondId = RGBtoGrayscale(
+                data[3*(i*x + j + 1) + 0],
+                data[3*(i*x + j + 1) + 1],
+                data[3*(i*x + j + 1) + 2]
+            );
             result[256*firstId + secondId] += 1;
         }
     }
@@ -103,8 +115,8 @@ double cosineSimilarity(double* v1, double* v2, int n){
 double compareImage(char* path1, char* path2){
     int x1, y1, n1;
     int x2, y2, n2;
-    unsigned char *data1 = stbi_load(path1, &x1, &y1, &n1, 1);
-    unsigned char *data2 = stbi_load(path2, &x2, &y2, &n2, 1);
+    unsigned char *data1 = stbi_load(path1, &x1, &y1, &n1, 3);
+    unsigned char *data2 = stbi_load(path2, &x2, &y2, &n2, 3);
     double v1[3];
     double v2[3];
     getCHE(data1, x1, y1, &v1[0], &v1[1], &v1[2]);
@@ -114,10 +126,6 @@ double compareImage(char* path1, char* path2){
     return cosineSimilarity(v1, v2, 3);
 }
 
-void lineParser(char* str, double* C, double* H, double* E, char* fileName){
-
-}
-
 // int x,y,n;
 // unsigned char *data = stbi_load("C:/Users/HP/Desktop/test2.png", &x, &y, &n, 1);
 // ... process data if not NULL ...
@@ -125,14 +133,14 @@ void lineParser(char* str, double* C, double* H, double* E, char* fileName){
 // ... replace '0' with '1'..'4' to force that many components per pixel
 // ... but 'n' will always be the number that it would have been if you said 0
 
-int main(int argc, char *argv[] ){
+int main(int argc, char *argv[]){
     FILE *fp;
     char* output1;
     char* output2;
     char* output3;
 
     int x1, y1, n1;
-    unsigned char *data1 = stbi_load(argv[1], &x1, &y1, &n1, 1);
+    unsigned char *data1 = stbi_load(argv[1], &x1, &y1, &n1, 3);
     double v1[3];
     getCHE(data1, x1, y1, &v1[0], &v1[1], &v1[2]);
 
@@ -143,12 +151,12 @@ int main(int argc, char *argv[] ){
     size_t len = 0;
 
     double v2[3];
-    char decoy[100];
-    char filename[100];
+    char decoy[300];
+    char filename[300];
 
     fds = fopen("txt/CHE.txt", "r");
 
-    while (fgets (decoy, 100, fds)) {
+    while (fgets (decoy, 200, fds)) {
         // printf("%s", decoy);
         sscanf(decoy, "%lf %lf %lf %s", &v2[0], &v2[1], &v2[2], filename);
         double similarity = cosineSimilarity(v1, v2, 3);

@@ -196,7 +196,7 @@ function changeListenerAnImage(e) {
 const uploadFile = async () => {
   resetTimer()
   timerStart()
-  console.log("upload")
+  console.log('upload')
   isUploading.value = true
   isHidden.value = false
   isUploaded.value = false
@@ -230,8 +230,9 @@ const uploadDB = async () => {
   console.log(urlToSend.value)
   try {
     // eslint-disable-next-line no-unused-vars
-    const response = await axios
-      .post('http://127.0.0.1:5000/uploadScrap', { string: urlScrap.value })
+    const response = await axios.post('http://127.0.0.1:5000/uploadScrap', {
+      string: urlScrap.value
+    })
     console.log(response.data)
     isUploading.value = false
     isUploaded.value = true
