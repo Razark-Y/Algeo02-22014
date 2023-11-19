@@ -71,6 +71,7 @@
           >
             Scrap It!
           </button>
+          <button @click.prevent="exportToPDF" class="p-4 bg-white rounded-md">Export to PDF</button>
           <div class="text-white">
             {{ formattedElapsedTime }}
           </div>
@@ -191,6 +192,16 @@ function changeListenerAnImage(e) {
   imageInput.value = e.target.files[0]
   imageURL.value = URL.createObjectURL(e.target.files[0])
   console.log(e.target.files[0])
+}
+
+const exportToPDF = async () => {
+  try {
+    await axios.post('http://127.0.0.1:5000/convertpdf',
+      {data: (sortedImageData.value)}
+    )
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 const uploadFile = async () => {

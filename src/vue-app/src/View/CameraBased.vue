@@ -59,6 +59,7 @@
                 ></div>
               </div>
             </label>
+            <button @click.prevent="exportToPDF" class="p-4 bg-white rounded-md">Export to PDF</button>
             <div
               v-if="!isHidden"
               id="statusLight"
@@ -171,6 +172,16 @@ function changeListenerFolder(e) {
     return
   }
   folderInput.value = files
+}
+
+const exportToPDF = async () => {
+  try {
+    await axios.post('http://127.0.0.1:5000/convertpdf',
+      {data: (sortedImageData.value)}
+    )
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 const uploadDB = async () => {

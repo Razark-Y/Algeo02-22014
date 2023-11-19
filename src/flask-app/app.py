@@ -11,6 +11,7 @@ from util import deleteFolderContent
 from CBIRTekstur import *
 from CBIRWarna import *
 from scrapper import scrape_images
+from convertPDF import *
 
 # Flask Setup
 app = Flask(__name__)
@@ -19,6 +20,16 @@ app.config["DEBUG"] = True
 app.config['UPLOAD_FOLDER'] = "uploads"
 # app.config['DB_FOLDER'] = "../vue-app/src/assets/img"
 app.config['DB_FOLDER'] = "database"
+
+@app.route('/convertpdf',methods=['POST'])
+def pdfconverter():
+    clear_json("data.json")
+    data = request.json['data']
+    with open('data.json', 'w') as f:
+        json.dump(data, f)
+    toPDF("data.json")
+    return jsonify({'status':'succes'})
+
 
 # Router for Database Upload
 @app.route('/uploadDB',methods=['POST'])
@@ -118,8 +129,9 @@ def cbir_texture_list_camera():
     img = Image.open(BytesIO(imgdata))
     img.save("uploads/gambarTemp.png")
     arrData = compareImageWithDataset("uploads/gambarTemp.png")
+    print(arrData)
     for (similarity,name) in arrData :
-        with open(name,'rb') as f:
+        with open("database/"+name,'rb') as f:
             image_data = f.read()
             base64_data = base64.b64encode(image_data).decode('utf-8')
             dataObject = {
