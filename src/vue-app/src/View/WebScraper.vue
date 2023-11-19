@@ -41,9 +41,7 @@
             </div>
 
             <button
-              v-bind:disabled="!isButtonClickable || isUploading || isDB"
               type="submit"
-              :class="{ disabled: !isButtonClickable || isUploading || isDB }"
               class="group relative h-12 w-48 overflow-hidden rounded-2xl bg-green-500 text-lg text-white font-bold text-whiteg-orange-300 px-3 py-1"
               @click.prevent="uploadFile"
             >
@@ -76,9 +74,7 @@
           <div class="text-white">
             {{ formattedElapsedTime }}
           </div>
-          <div class="text-white" v-if="!isHidden">
-            {{ sortedImageData.length }} gambar
-          </div>
+          <div class="text-white" v-if="!isHidden">{{ sortedImageData.length }} gambar</div>
           <div
             v-if="!isHidden"
             id="statusLight"
@@ -127,11 +123,13 @@ import axios from 'axios'
 import { ref, computed } from 'vue'
 
 // STATE
+// BUTTON STATE
 const isError = ref(false)
 const isUploading = ref(false)
 const isButtonClickable = ref(false)
 const isHidden = ref(true)
 const isUploaded = ref(false)
+
 const currentPage = ref(0)
 const tipeInput = ref(false)
 const elapsedTime = ref(0)
@@ -198,6 +196,7 @@ function changeListenerAnImage(e) {
 const uploadFile = async () => {
   resetTimer()
   timerStart()
+  console.log("upload")
   isUploading.value = true
   isHidden.value = false
   isUploaded.value = false
@@ -211,7 +210,6 @@ const uploadFile = async () => {
         'Content-Type': 'multipart/form-data'
       }
     })
-    console.log(response.data)
     imageData.value = response.data
     isUploaded.value = true
     isUploading.value = false
@@ -239,7 +237,6 @@ const uploadDB = async () => {
       })
     console.log(response.data)
     isUploading.value = false
-    isUploaded.value = true
     stopTimer()
   } catch (error) {
     stopTimer()

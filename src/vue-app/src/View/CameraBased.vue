@@ -103,11 +103,9 @@
 
 <script setup>
 import Paginate from 'vuejs-paginate-next'
-// import Gambar from '../components/gambar-viewer.vue'
+import Gambar from '../components/gambar-viewer.vue'
 import axios from 'axios'
-// import Camera from '../components/Camera-Feed.vue'
 import { ref, computed, onMounted } from 'vue'
-//   import type { InstanceType } from 'vue'
 
 // STATE
 const isError = ref(false)

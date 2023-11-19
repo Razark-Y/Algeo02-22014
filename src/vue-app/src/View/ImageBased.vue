@@ -87,9 +87,7 @@
           <div class="text-white">
             {{ formattedElapsedTime }}
           </div>
-          <div class="text-white" v-if="!isHidden ">
-            {{ sortedImageData.length }} gambar
-          </div>
+          <div class="text-white" v-if="!isHidden">{{ sortedImageData.length }} gambar</div>
           <div
             v-if="!isHidden"
             id="statusLight"
