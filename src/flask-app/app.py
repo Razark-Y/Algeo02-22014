@@ -23,15 +23,16 @@ app.config['DB_FOLDER'] = "database"
 # Router for Database Upload
 @app.route('/uploadDB',methods=['POST'])
 def uploadDB():
-    folder = request.files.getlist('files')
-    processDataset("database")
     deleteFolderContent("database")
+    folder = request.files.getlist('files')
     for file in folder:
         if file:
             filename = secure_filename(file.filename)
             filename = filename.replace(" ","_")
             filepath = os.path.join(app.config['DB_FOLDER'],filename)
             file.save(filepath)
+    createHistogram("database","cache.json")
+    processDataset("database")
     return jsonify({'status': 'Succes'})
 
 # Router for Scrapper
@@ -51,18 +52,16 @@ def cbir_color_list():
     if 'image' in request.files:
         image = request.files['image']
         imageinput_result = create_histograms_for_segments(image)
-        if image:
-            filename = secure_filename(image.filename)
-            for fileDB in os.listdir('database') :
-                imageDB_result = createHistogram("cache.json","database/"+fileDB)
-                with open("database/"+fileDB, 'rb') as f:
-                    image_data = f.read()
-                    base64_data = base64.b64encode(image_data).decode('utf-8')
-                    dataObject = {
-                        'imageTitle': base64_data,
-                        'similarity': calculate_weighted_cosine_similarity(imageinput_result,imageDB_result)
-                    }
-                    data.append(dataObject)
+        arrdata = caching("cache.json",imageinput_result)
+        for (filename,similarity) in arrdata :
+            with open(filename.replace("\\","/"), 'rb') as f:
+                image_data = f.read()
+                base64_data = base64.b64encode(image_data).decode('utf-8')
+                dataObject = {
+                    'imageTitle': base64_data,
+                    'similarity': similarity
+                }
+                data.append(dataObject)
     return jsonify(data)
 
 # Router for CBIR - Colour with Camera Feed

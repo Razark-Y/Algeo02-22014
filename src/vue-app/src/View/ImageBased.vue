@@ -41,9 +41,9 @@
             </div>
 
             <button
-              v-bind:disabled="isUploading"
+              v-bind:disabled="isUploading || !isButtonClickable || isUploading || isDB" 
               type="submit"
-              :class="{ disabled: isUploading  }"
+              :class="{ disabled: isUploading || !isButtonClickable || isUploading || isDB  }"
               class="group relative h-12 w-48 overflow-hidden rounded-2xl bg-green-500 text-lg text-white font-bold text-whiteg-orange-300 px-3 py-1"
               @click.prevent="uploadFile"
             >
@@ -78,8 +78,8 @@
           <button
             type="submit"
             @click.prevent="uploadDB"
-            v-bind:disabled="isUploading"
-            :class="{ disabled: isUploading }"
+            v-bind:disabled="!isButtonClickable || isUploading || isINPT"
+            :class="{ disabled: !isButtonClickable || isUploading || isINPT }"
             class="px-4 py-2.5 bg-green-700 text-md text-white font-bold rounded-md hover:grayscale"
           >
             Upload Database
@@ -195,7 +195,7 @@ const pagedImageData = computed(() => {
 function changeListenerAnImage(e) {
   isError.value = false
   isINPT.value = true
-  // isDB.value = false
+  isDB.value = false
   isButtonClickable.value = true
   isHidden.value = true
   imageInput.value = e.target.files[0]
