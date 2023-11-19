@@ -86,21 +86,37 @@ def calculate_weighted_cosine_similarity(histograms1, histograms2):
     return total_similarity / sum(weights) *100
 
 
-def caching(data,image_path):
-    for entry in data:
-        if entry["image_path"] == image_path:
-            return np.array(entry["image_vectors"])   
-def createHistogram(data, image_path):
-    histogram = create_histograms_for_segments(image_path)
-    results = {
-        "image_path": image_path,
-        "image_vectors": numpy_array_to_list(histogram)
-    }
-    # append_to_json('cache.json', results)
+def caching(json_file_path, input_histogram):
+    try:
+        with open(json_file_path, 'r') as file:
+            data = json.load(file)
+    except Exception as e:
+        print(f"Error reading JSON file: {e}")
+        return None
+    results = []
+    for image_path, image_data in data.items():
+        image_vector = np.array(image_data["image_vectors"])
+        similarity = calculate_weighted_cosine_similarity(input_histogram, image_vector)
+        results.append([image_path,similarity])
 
-    return histogram
+    return results
 
+def createHistogram(folder, json_file):
+    clear_json(json_file)
+    data={}
+    for filename in os.listdir(folder):
+        image_path = os.path.join(folder, filename)
 
+        if os.path.isfile(image_path) and filename.lower().endswith(('.png', '.jpg', '.jpeg')):
+            histogram = create_histograms_for_segments(image_path)
+            results = {
+                "image_path": image_path,
+                "image_vectors": numpy_array_to_list(histogram)
+            }
+
+            data[image_path] = results
+    with open(json_file, 'w') as file:
+        json.dump(data, file, indent=4)
 
 
 def create_histograms_for_segments(image_path):
@@ -137,15 +153,18 @@ def clear_json(file_path):
         json_file.write('[]')
 # clear_json('similarity_results.json')
 #Testing
-image1 = "Testing_139.jpg"
+image1 = "Testing_141.jpg"
 image2 = "Testing_142.jpg"
 with open('cache.json', 'r') as file:
     try:
         data = json.load(file)
     except json.JSONDecodeError:
         data = []
-vector_result = createHistogram(data,image1)
-vector2_result = createHistogram(data,image2)
+        
+tes = create_histograms_for_segments(image1)
+createHistogram('database','cache.json')
+print(caching('cache.json',tes))
+# vector2_result = createHistogram(data,image2)
 
 # Just in case mau panggil ulang, tinggal np.array dari fungsi si read_vectorJSON)
 # vector2_result = np.array(read_vectorJSON('similarity_results.json',0))
