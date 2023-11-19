@@ -69,12 +69,17 @@ def manual_dot_product(vec_a, vec_b):
 def manual_norm(vec):
     return np.sqrt(np.sum(vec * vec))
 
-def manual_cosine_similarity(vec_a, vec_b):
-    dot_product = manual_dot_product(vec_a, vec_b)
-    norm_a = manual_norm(vec_a)
-    norm_b = manual_norm(vec_b)
-    return dot_product / (norm_a * norm_b) if norm_a != 0 and norm_b != 0 else 0
-
+def manual_cosine_similarity(hist1, hist2):
+    if np.all(hist1 == 0) and np.all(hist2 == 0):
+        return 1  
+    dot_product = np.dot(hist1, hist2)
+    norm_hist1 = np.linalg.norm(hist1)
+    norm_hist2 = np.linalg.norm(hist2)
+    if norm_hist1 != 0 and norm_hist2 != 0:
+        return dot_product / (norm_hist1 * norm_hist2)
+    else:
+        return 0
+    
 def calculate_weighted_cosine_similarity(histograms1, histograms2):
     weights = [5 if i == 4 else 3 if i in (3, 5) else 1 for i in range(9)]
     total_similarity = 0

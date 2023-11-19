@@ -81,7 +81,7 @@
             class="w-4 h-4 rounded-full"
             :class="{
               'bg-green-400': isUploaded,
-              'bg-yellow-400 animate-ping': !isUploaded,
+              'bg-yellow-400 animate-ping': isUploading,
               'bg-red-600 animate-none': isError
             }"
           ></div>
@@ -232,17 +232,15 @@ const uploadDB = async () => {
     // eslint-disable-next-line no-unused-vars
     const response = await axios
       .post('http://127.0.0.1:5000/uploadScrap', { string: urlScrap.value })
-      .then((response) => {
-        console.log(response.data)
-      })
     console.log(response.data)
     isUploading.value = false
+    isUploaded.value = true
     stopTimer()
   } catch (error) {
+    isUploading.value = false
     stopTimer()
-    console.error(error)
-    isError.value = true
   }
+  isUploaded.value = true
 }
 
 const formattedElapsedTime = computed(() => {
