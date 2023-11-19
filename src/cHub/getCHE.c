@@ -27,6 +27,10 @@ void printMatrix(unsigned char *data, int x, int y){
     }
 }
 
+int RGBtoGrayscale(int R, int G, int B){
+    return (int)(0.299*(double)R + 0.587*(double)G + 0.114*(double)B);
+}
+
 void constructCoOccurenceMatrix(unsigned char* data, int x, int y, unsigned int* result){
 
     int i, j;
@@ -39,13 +43,20 @@ void constructCoOccurenceMatrix(unsigned char* data, int x, int y, unsigned int*
 
     for(i = 0; i < y; i++){
         for(j = 0; j < x - 1; j++){
-            int firstId = data[i*x + j];
-            int secondId = data[i*x + j + 1];
+            int firstId = RGBtoGrayscale(
+                data[3*(i*x + j) + 0],
+                data[3*(i*x + j) + 1],
+                data[3*(i*x + j) + 2]
+            );
+            int secondId = RGBtoGrayscale(
+                data[3*(i*x + j + 1) + 0],
+                data[3*(i*x + j + 1) + 1],
+                data[3*(i*x + j + 1) + 2]
+            );
             result[256*firstId + secondId] += 1;
         }
     }
 }
-
 void constructNormalizedOccMatrix(unsigned char* img, int x, int y, double* result){
 
     int occMatrix[256*256];
@@ -102,8 +113,8 @@ double cosineSimilarity(double* v1, double* v2, int n){
 double compareImage(char* path1, char* path2){
     int x1, y1, n1;
     int x2, y2, n2;
-    unsigned char *data1 = stbi_load(path1, &x1, &y1, &n1, 1);
-    unsigned char *data2 = stbi_load(path2, &x2, &y2, &n2, 1);
+    unsigned char *data1 = stbi_load(path1, &x1, &y1, &n1, 3);
+    unsigned char *data2 = stbi_load(path2, &x2, &y2, &n2, 3);
     double v1[3];
     double v2[3];
     getCHE(data1, x1, y1, &v1[0], &v1[1], &v1[2]);
@@ -127,7 +138,7 @@ int main(int argc, char *argv[] ){
     char* output3;
 
     int x1, y1, n1;
-    unsigned char *data1 = stbi_load(argv[1], &x1, &y1, &n1, 1);
+    unsigned char *data1 = stbi_load(argv[1], &x1, &y1, &n1, 3);
     double v1[3];
     getCHE(data1, x1, y1, &v1[0], &v1[1], &v1[2]);
 

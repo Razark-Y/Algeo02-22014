@@ -6,6 +6,10 @@
 #include <time.h>
 #include <stdio.h>
 #include <conio.h>
+#include <sys/types.h>
+#include <dirent.h>
+
+#define _XOPEN_SOURCE 700
 
 void printInt(int x){
     printf("%d ", x);
@@ -27,6 +31,10 @@ void printMatrix(unsigned char *data, int x, int y){
     }
 }
 
+int RGBtoGrayscale(int R, int G, int B){
+    return (int)(0.299*(double)R + 0.587*(double)G + 0.114*(double)B);
+}
+
 void constructCoOccurenceMatrix(unsigned char* data, int x, int y, unsigned int* result){
 
     int i, j;
@@ -39,8 +47,16 @@ void constructCoOccurenceMatrix(unsigned char* data, int x, int y, unsigned int*
 
     for(i = 0; i < y; i++){
         for(j = 0; j < x - 1; j++){
-            int firstId = data[i*x + j];
-            int secondId = data[i*x + j + 1];
+            int firstId = RGBtoGrayscale(
+                data[3*(i*x + j) + 0],
+                data[3*(i*x + j) + 1],
+                data[3*(i*x + j) + 2]
+            );
+            int secondId = RGBtoGrayscale(
+                data[3*(i*x + j + 1) + 0],
+                data[3*(i*x + j + 1) + 1],
+                data[3*(i*x + j + 1) + 2]
+            );
             result[256*firstId + secondId] += 1;
         }
     }
@@ -129,12 +145,27 @@ int main(int argc, char *argv[] ){
 
     int i;
     fp = fopen("txt/CHE.txt", "w");
-    for(i = 1; i < argc; i++){
-        unsigned char *data1 = stbi_load(argv[i], &x1, &y1, &n1, 1);
-        getCHE(data1, x1, y1, &v1[0], &v1[1], &v1[2]);
 
-        fprintf(fp, "%f %f %f %s\n", v1[0], v1[1], v1[2], argv[i]);
-        stbi_image_free(data1);
-    }
+    DIR *dp;
+    struct dirent *ep;      
+
+    dp = opendir (argv[1]);
+    i = 0;
+    while ((ep = readdir (dp)) != NULL){
+        if (i < 2){
+            i++;
+        }
+        else{
+            char* dir = ep -> d_name;
+            char theDirectory[200];
+            sprintf(theDirectory, "%s/%s", argv[1], dir);
+
+            unsigned char *data1 = stbi_load(theDirectory, &x1, &y1, &n1, 3);
+            getCHE(data1, x1, y1, &v1[0], &v1[1], &v1[2]);
+            fprintf(fp, "%f %f %f %s\n", v1[0], v1[1], v1[2], dir);
+            stbi_image_free(data1);
+        }
+    }   
+    (void) closedir (dp);
     return 0;
 }
