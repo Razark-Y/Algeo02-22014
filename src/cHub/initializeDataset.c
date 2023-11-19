@@ -138,7 +138,7 @@ double compareImage(char* path1, char* path2){
 
 int main(int argc, char *argv[] ){
     FILE *fp;
-    char output1[100];
+    char output1[200];
 
     int x1, y1, n1;
     double v1[3];
