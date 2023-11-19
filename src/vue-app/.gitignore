@@ -27,5 +27,3 @@ coverage
 *.sln
 *.sw?
 
-database
-cache.json
