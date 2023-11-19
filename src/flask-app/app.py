@@ -52,7 +52,7 @@ def cbir_color_list():
         if image:
             filename = secure_filename(image.filename)
             for fileDB in os.listdir('database') :
-                imageDB_result = create_histograms_for_segments("database/"+fileDB)
+                imageDB_result = createHistogram("cache.json","database/"+fileDB)
                 dataObject = {
                     'imageTitle': fileDB,
                     'similarity': calculate_weighted_cosine_similarity(imageinput_result,imageDB_result)
@@ -71,7 +71,7 @@ def cbir_color_list_camera():
     img = (BytesIO(imgdata))
     imageinput_result = create_histograms_for_segments(img)
     for fileDB in os.listdir('database') :
-        imageDB_result = create_histograms_for_segments("database/"+fileDB)
+        imageDB_result = createHistogram("cache.json","database/"+fileDB)
         dataObject = {
             'imageTitle': fileDB,
             'similarity': calculate_weighted_cosine_similarity(imageinput_result,imageDB_result)

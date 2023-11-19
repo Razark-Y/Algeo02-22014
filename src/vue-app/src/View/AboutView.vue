@@ -11,7 +11,9 @@
         />
         <div className="Text font-Merriweather flex flex-col mt-[50px] mr-[60px]">
           <h1 className="text-[#ef6e4e] text-[40px] text-center font-black">Kosu Salted Caramel</h1>
-          <p className="font-Gillsans text-[#792133] text-[25px] text-justify font-medium mx-8 mt-[15px]">
+          <p
+            className="font-Gillsans text-[#792133] text-[25px] text-justify font-medium mx-8 mt-[15px]"
+          >
             Three highly motivated and enthusiastic informatics students from the prestigious
             Bandung Institute of Technology, with a deep-seated passion and immense curiosity for
             the expansive and ever-evolving field of informatics, embarked on an ambitious mini
@@ -113,8 +115,9 @@
               <img
                 src="../assets/img/ditopic.jpg"
                 alt="son"
-                className='object-cover group-hover:rotate-3 group-hover:scale-125 transition-transform h-full w-full'
-                style="object-fit: cover; transform-origin: center; transition: transform 0.3s" />
+                className="object-cover group-hover:rotate-3 group-hover:scale-125 transition-transform h-full w-full"
+                style="object-fit: cover; transform-origin: center; transition: transform 0.3s"
+              />
             </div>
             <div
               className="absolute inset-0 bg-gradient-to-b from-transparent to-black/50 via-transparent to-black group-hover:from-black/70 group-hover: via-black/60 group-hover:to-black/70"
@@ -147,4 +150,3 @@
     </div>
   </div>
 </template>
-

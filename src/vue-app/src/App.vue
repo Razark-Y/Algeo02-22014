@@ -3,7 +3,7 @@
     class="glass flex flex-row justify-between py-4 px-[7em] fixed top-0 right-0 left-0 z-50"
   >
     <img src="./assets/logo.svg" height="100" width="200" />
-    <div class="flex flex-row gap-8  items-center">
+    <div class="flex flex-row gap-8 items-center">
       <router-link
         class-active="active"
         aria-current="page"
@@ -12,10 +12,10 @@
         >Home</router-link
       >
       <router-link
-      class-active="active"
-      to="/CameraBased"
-      class="font-Merriweather font-bold text-[#ef6e4e] text-[22px] hover:cursor-pointer"
-      >Camera</router-link
+        class-active="active"
+        to="/CameraBased"
+        class="font-Merriweather font-bold text-[#ef6e4e] text-[22px] hover:cursor-pointer"
+        >Camera</router-link
       >
       <router-link
         class-active="active"
@@ -30,9 +30,9 @@
         >Web Scraper</router-link
       >
       <router-link
-      class-active="active"
-      to="/Docs"
-      class="font-Merriweather font-bold text-[#ef6e4e] text-[22px] hover:cursor-pointer hover:text-[#e29578]"
+        class-active="active"
+        to="/Docs"
+        class="font-Merriweather font-bold text-[#ef6e4e] text-[22px] hover:cursor-pointer hover:text-[#e29578]"
         >Docs</router-link
       >
       <router-link
@@ -44,7 +44,9 @@
       >
     </div>
   </navigation-bar>
-  <router-view ></router-view>
+  <div class="bg-[#792133] min-h-screen">
+    <router-view class="pb-8"></router-view>
+  </div>
 </template>
 
 <script setup></script>
@@ -54,7 +56,7 @@
   /* color: bisque; */
   color: #792133;
   background-color: #ffddd2;
-  padding: .3em 1em;
+  padding: 0.3em 1em;
   border-radius: 30px;
 }
 

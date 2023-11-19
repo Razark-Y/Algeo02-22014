@@ -1,8 +1,8 @@
 <template>
-  <div class="flex flex-col justify-center items-center gap-8 mb-4 mt-24">
+  <div class="flex flex-col justify-center items-center gap-8 mb-4 pt-24">
     <div class="flex gap-5">
       <label
-        class="bg-slate-400 w-60 h-40 bg-cover bg-center rounded-sm shadow-xl flex justify-center items-center hover:cursor-pointer hover:scale-105"
+        class="bg-pink-400 w-[25em] h-[18em] bg-cover bg-center rounded-sm shadow-xl flex justify-center items-center hover:cursor-pointer hover:scale-105"
         :style="`background-image: url(${imageURL});`"
         style="background-repeat: no-repeat"
         for="image"
@@ -64,7 +64,7 @@
             placeholder="https://jkt48.com/"
             v-model="urlScrap"
             type="text"
-            class="outline-none border-2 border-violet-700 rounded-md px-3 py-2"
+            class="outline-none border-[3px] border-[#ef6e4e] rounded-md px-3 py-2"
           />
           <button
             type="submit"
@@ -101,14 +101,17 @@
     <Paginate
       v-if="pagedImageData.length != 0"
       :page-count="pagedImageData.length"
-      :active-class="`text-yellow-600`"
-      :page-link-class="`px-3 py-6`"
-      :prev-link-class="`px-3 py-6`"
-      :next-link-class="`px-3 py-6`"
+      :active-class="`text-yellow-600 scale-105 border-[#ffddd2]`"
+      :page-link-class="`px-3 py-6 text-white font-semibold`"
+      :prev-link-class="`px-3 py-6 text-white font-semibold`"
+      :next-link-class="`px-3 py-6 text-white font-semibold`"
       :click-handler="changePage"
       :prev-text="'Prev'"
       :next-text="'Next'"
       :container-class="`flex flex-row gap-10`"
+      :page-class="`border-[3px] border-[#ef6e4e] rounded-md hover:cursor-pointer hover:scale-105 transition py-2 px-2`"
+      :next-class="`border-[3px] border-[#ef6e4e] rounded-md hover:cursor-pointer hover:scale-105 transition py-2 px-2`"
+      :prev-class="`border-[3px] border-[#ef6e4e] rounded-md hover:cursor-pointer hover:scale-105 transition py-2 px-2`"
     >
     </Paginate>
   </div>
@@ -172,7 +175,7 @@ const pagedImageData = computed(() => {
       subData = []
     }
   }
-  if (subData != [] && inLoop) {
+  if ((subData.length != 0)  && inLoop) {
     data.push(subData)
   }
   return data
@@ -223,9 +226,6 @@ const uploadDB = async () => {
   isHidden.value = false
   isUploaded.value = false
   console.log(urlToSend.value)
-  // const formData = new FormData()
-  // formData.append('url', urlToSend.value);
-  // console.log(formData.getAll('files'))
   try {
     const response = await axios
       .post('http://127.0.0.1:5000/uploadScrap', { string: urlScrap.value })
@@ -237,7 +237,6 @@ const uploadDB = async () => {
     console.error(error)
     isError.value = true
   }
-  // }
   isUploading.value = false
   stopTimer()
 }

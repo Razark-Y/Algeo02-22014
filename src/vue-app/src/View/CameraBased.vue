@@ -1,98 +1,103 @@
-<template>
-  <div class="flex flex-col justify-center items-center gap-8 mb-4 mt-24">
-    <div class="flex gap-5">
-      <div class="overflow-clip">
-        <video ref="video" autoplay playsinline webkit-playsinline muted hidden></video>
-        <canvas ref="canvas" width="300" height="200" class="bg-black rounded-3xl"></canvas>
+<template >
+  <div id="background" class="bg-[#792133] min-h-screen">
+    <div class="flex flex-col justify-center items-center gap-8 mb-4 pt-[8rem]">
+      <div class="flex gap-5">
+        <div class="overflow-clip">
+          <video ref="video" autoplay playsinline webkit-playsinline muted hidden></video>
+          <canvas ref="canvas" width="300" height="200" class="bg-black rounded-3xl"></canvas>
+        </div>
+        <div>
+          <form method="POST" enctype="multipart/form-data">
+            <div class="flex flex-col items-center">
+              <div class="flex flex-col justify-end mb-3"></div>
+            </div>
+          </form>
+        </div>
       </div>
-      <div>
+  
+      <div id="addDatabase">
         <form method="POST" enctype="multipart/form-data">
-          <div class="flex flex-col items-center">
-            <div class="flex flex-col justify-end mb-3"></div>
+          <div class="flex flex-row gap-4 items-center h-fit">
+            <label
+              for="folder"
+              class="text-lg text-white font-bold bg-orange-500 px-4 py-2 rounded-md cursor-pointer hover:grayscale text-center"
+              >Database Input
+              <input
+                ref="folder"
+                type="file"
+                id="folder"
+                name="file[]"
+                class="hidden"
+                @change="changeListenerFolder"
+                webkitdirectory
+                mozdirectory
+              />
+            </label>
+            <button
+              type="submit"
+              @click.prevent="uploadDB"
+              v-bind:disabled="!isButtonClickable || isUploading || isINPT"
+              :class="{ disabled: !isButtonClickable || isUploading || isINPT }"
+              class="px-4 py-2.5 bg-green-700 text-md text-white font-bold rounded-md hover:grayscale"
+            >
+              Upload Database
+            </button>
+            <label for="toogleButton" class="flex flex-col gap-1 items-center cursor-pointer">
+              <div v-if="!tipeInput" class="px-2 font-thin">Color</div>
+              <div v-else class="px-2 font-thin">Texture</div>
+              <div class="relative">
+                <input
+                  @click="changeUrl"
+                  id="toogleButton"
+                  type="checkbox"
+                  class="hidden"
+                  v-model="tipeInput"
+                />
+                <div class="toggle-path bg-yellow-400 w-9 h-5 rounded-full shadow-inner"></div>
+                <div
+                  class="toggle-circle absolute w-3.5 h-3.5 bg-white rounded-full shadow inset-y-0 left-0"
+                ></div>
+              </div>
+            </label>
+            <div
+              v-if="!isHidden"
+              id="statusLight"
+              class="w-4 h-4 rounded-full"
+              :class="{
+                'bg-green-400': isUploaded,
+                'bg-yellow-400 animate-ping': !isUploaded,
+                'bg-red-600 animate-none': isError
+              }"
+            ></div>
           </div>
         </form>
       </div>
+  
+      <div class="flex flex-row flex-wrap justify-center gap-8 mx-40 max-w-2xl">
+        <Gambar
+          v-for="(value, key) in pagedImageData[currentPage]"
+          :key="key"
+          :img-json="value"
+        ></Gambar>
+      </div>
+  
+      <Paginate
+        v-if="pagedImageData.length != 0"
+        :page-count="pagedImageData.length"
+        :active-class="`text-yellow-600 scale-105 border-[#ffddd2]`"
+        :page-link-class="`px-3 py-6 text-white font-semibold`"
+        :prev-link-class="`px-3 py-6 text-white font-semibold`"
+        :next-link-class="`px-3 py-6 text-white font-semibold`"
+        :click-handler="changePage"
+        :prev-text="'Prev'"
+        :next-text="'Next'"
+        :container-class="`flex flex-row gap-10`"
+        :page-class="`border-[3px] border-[#ef6e4e] rounded-md hover:cursor-pointer hover:scale-105 transition py-2 px-2`"
+        :next-class="`border-[3px] border-[#ef6e4e] rounded-md hover:cursor-pointer hover:scale-105 transition py-2 px-2`"
+        :prev-class="`border-[3px] border-[#ef6e4e] rounded-md hover:cursor-pointer hover:scale-105 transition py-2 px-2`"
+      >
+      </Paginate>
     </div>
-
-    <div id="addDatabase">
-      <form method="POST" enctype="multipart/form-data">
-        <div class="flex flex-row gap-4 items-center h-fit">
-          <label
-            for="folder"
-            class="text-lg text-white font-bold bg-orange-500 px-4 py-2 rounded-md cursor-pointer hover:grayscale text-center"
-            >Database Input
-            <input
-              ref="folder"
-              type="file"
-              id="folder"
-              name="file[]"
-              class="hidden"
-              @change="changeListenerFolder"
-              webkitdirectory
-              mozdirectory
-            />
-          </label>
-          <button
-            type="submit"
-            @click.prevent="uploadDB"
-            v-bind:disabled="!isButtonClickable || isUploading || isINPT"
-            :class="{ disabled: !isButtonClickable || isUploading || isINPT }"
-            class="px-4 py-2.5 bg-green-700 text-md text-white font-bold rounded-md hover:grayscale"
-          >
-            Upload Database
-          </button>
-          <label for="toogleButton" class="flex flex-col gap-1 items-center cursor-pointer">
-            <div v-if="!tipeInput" class="px-2 font-thin">Color</div>
-            <div v-else class="px-2 font-thin">Texture</div>
-            <div class="relative">
-              <input
-                @click="changeUrl"
-                id="toogleButton"
-                type="checkbox"
-                class="hidden"
-                v-model="tipeInput"
-              />
-              <div class="toggle-path bg-yellow-400 w-9 h-5 rounded-full shadow-inner"></div>
-              <div
-                class="toggle-circle absolute w-3.5 h-3.5 bg-white rounded-full shadow inset-y-0 left-0"
-              ></div>
-            </div>
-          </label>
-          <div
-            v-if="!isHidden"
-            id="statusLight"
-            class="w-4 h-4 rounded-full"
-            :class="{
-              'bg-green-400': isUploaded,
-              'bg-yellow-400 animate-ping': !isUploaded,
-              'bg-red-600 animate-none': isError
-            }"
-          ></div>
-        </div>
-      </form>
-    </div>
-
-    <div class="flex flex-row flex-wrap justify-center gap-8 mx-40 max-w-2xl">
-      <Gambar
-        v-for="(value, key) in pagedImageData[currentPage]"
-        :key="key"
-        :img-json="value"
-      ></Gambar>
-    </div>
-
-    <Paginate
-      v-if="pagedImageData.length != 0"
-      :page-count="pagedImageData.length"
-      :active-class="`text-yellow-600`"
-      :page-link-class="`px-3 py-6`"
-      :prev-link-class="`px-3 py-6`"
-      :next-link-class="`px-3 py-6`"
-      :click-handler="changePage"
-      :prev-text="'Prev'"
-      :next-text="'Next'"
-      :container-class="`flex flex-row gap-10`"
-    >
-    </Paginate>
   </div>
 </template>
 
@@ -151,7 +156,7 @@ const pagedImageData = computed(() => {
       subData = []
     }
   }
-  if (subData != [] && inLoop) {
+  if ((subData.length != 0) && inLoop) {
     data.push(subData)
   }
   return data
