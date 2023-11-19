@@ -80,6 +80,7 @@ def calculate_weighted_cosine_similarity(histograms1, histograms2):
     total_similarity = 0
     for i in range(9):
         similarity = manual_cosine_similarity(histograms1[i], histograms2[i])
+        similarity = 0 if np.isnan(similarity) else similarity
         weighted_similarity = similarity * weights[i]
         total_similarity += weighted_similarity
     print(total_similarity / sum(weights) *100)
