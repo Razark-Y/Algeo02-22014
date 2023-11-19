@@ -8,7 +8,7 @@ from PIL import Image
 
 # Import library buatan
 from util import deleteFolderContent
-from CBIRTekstur import compareImage
+from CBIRTekstur import *
 from CBIRWarna import *
 from scrapper import scrape_images
 
@@ -24,6 +24,7 @@ app.config['DB_FOLDER'] = "database"
 @app.route('/uploadDB',methods=['POST'])
 def uploadDB():
     folder = request.files.getlist('files')
+    processDataset("database")
     deleteFolderContent("database")
     for file in folder:
         if file:
@@ -40,6 +41,7 @@ def uploadScrap():
     print(url)
     deleteFolderContent("database")
     scrape_images(url,"database")
+    deleteFolderContent("database")
     return jsonify({'status': 'Succes'})
 
 # Router for CBIR - Colour
@@ -66,7 +68,6 @@ def cbir_color_list():
 # Router for CBIR - Colour with Camera Feed
 @app.route('/uploadColorCamera',methods=['POST','GET'])
 def cbir_color_list_camera():
-    print("tes kamera")
     data = []
     base64_string = request.json['file']
     base64_list = base64_string.split(',')
@@ -92,12 +93,17 @@ def cbir_texture_list():
             filename = secure_filename(image.filename)
             filepath = os.path.join(app.config['UPLOAD_FOLDER'],filename)
             image.save(filepath)
-            for fileDB in os.listdir('database') :
-                dataObject = {
-                    'imageTitle': fileDB,
-                    'similarity': float(compareImage(filepath,'database/'+fileDB)) * 100
-                }
-                data.append(dataObject)
+            arrData = compareImageWithDataset(filepath.replace("\\","/"))
+            print(arrData)
+            for (similarity,name) in arrData :
+                with open(name,'rb') as f:
+                    image_data = f.read()
+                    base64_data = base64.b64encode(image_data).decode('utf-8')
+                    dataObject = {
+                        'imageTitle': base64_data,
+                        'similarity': float(similarity) * 100
+                    }
+                    data.append(dataObject)
     return jsonify(data)
 
 # Router for CBIR - Texture with Camera Feed
@@ -109,12 +115,16 @@ def cbir_texture_list_camera():
     imgdata = base64.b64decode(base64_list[1])
     img = Image.open(BytesIO(imgdata))
     img.save("uploads/gambarTemp.png")
-    for fileDB in os.listdir('database') :
-        dataObject = {
-            'imageTitle': fileDB,
-            'similarity': float(compareImage("uploads/gambarTemp.png",'database/'+fileDB)) * 100
-        }
-        data.append(dataObject)
+    arrData = compareImageWithDataset("uploads/gambarTemp.png")
+    for (similarity,name) in arrData :
+        with open(name,'rb') as f:
+            image_data = f.read()
+            base64_data = base64.b64encode(image_data).decode('utf-8')
+            dataObject = {
+                'imageTitle': base64_data,
+                'similarity': float(similarity) * 100
+            }
+            data.append(dataObject)
     os.remove("uploads/gambarTemp.png")
     return jsonify(data)
 
