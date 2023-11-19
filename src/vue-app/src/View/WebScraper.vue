@@ -73,8 +73,11 @@
           >
             Scrap It!
           </button>
-          <div>
+          <div class="text-white">
             {{ formattedElapsedTime }}
+          </div>
+          <div class="text-white" v-if="!isHidden">
+            {{ sortedImageData.length }} gambar
           </div>
           <div
             v-if="!isHidden"
@@ -211,12 +214,13 @@ const uploadFile = async () => {
     console.log(response.data)
     imageData.value = response.data
     isUploaded.value = true
+    isUploading.value = false
+    stopTimer()
   } catch (error) {
     console.error(error)
+    stopTimer()
     isError.value = true
   }
-  stopTimer()
-  isUploading.value = false
 }
 
 const uploadDB = async () => {
@@ -233,13 +237,15 @@ const uploadDB = async () => {
       .then((response) => {
         console.log(response.data)
       })
+    console.log(response.data)
+    isUploading.value = false
     isUploaded.value = true
+    stopTimer()
   } catch (error) {
+    stopTimer()
     console.error(error)
     isError.value = true
   }
-  isUploading.value = false
-  stopTimer()
 }
 
 const formattedElapsedTime = computed(() => {

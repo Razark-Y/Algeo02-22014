@@ -39,10 +39,10 @@ def uploadDB():
 @app.route('/uploadScrap',methods=['POST'])
 def uploadScrap():
     url = request.json['string']
-    print(url)
     deleteFolderContent("database")
     scrape_images(url,"database")
-    deleteFolderContent("database")
+    createHistogram("database","cache.json")
+    processDataset("database")
     return jsonify({'status': 'Succes'})
 
 # Router for CBIR - Colour
@@ -73,13 +73,16 @@ def cbir_color_list_camera():
     imgdata = base64.b64decode(base64_list[1])
     img = (BytesIO(imgdata))
     imageinput_result = create_histograms_for_segments(img)
-    for fileDB in os.listdir('database') :
-        imageDB_result = createHistogram("cache.json","database/"+fileDB)
-        dataObject = {
-            'imageTitle': fileDB,
-            'similarity': calculate_weighted_cosine_similarity(imageinput_result,imageDB_result)
-        }
-        data.append(dataObject)
+    arrdata = caching("cache.json",imageinput_result)
+    for (filename,similarity) in arrdata :
+        with open(filename.replace("\\","/"), 'rb') as f:
+            image_data = f.read()
+            base64_data = base64.b64encode(image_data).decode('utf-8')
+            dataObject = {
+                'imageTitle': base64_data,
+                'similarity': similarity
+            }
+            data.append(dataObject)
     return jsonify(data)
 
 # Router for CBIR - Texture

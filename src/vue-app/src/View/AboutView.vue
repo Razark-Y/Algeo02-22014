@@ -5,7 +5,7 @@
         className="Information-Block w-[90%] h-[500px] bg-[#ffddd2] mt-[50px] rounded-[40px] flex justify-center "
       >
         <img
-          src="../assets/img/ditopic.jpg"
+          src="../assets/img/banner.jpg"
           alt="FotoBareng"
           className=" rounded-[40px] mx-[30px] my-[30px] w-[400px] h-[430px] "
         />

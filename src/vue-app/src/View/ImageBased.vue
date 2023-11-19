@@ -41,9 +41,9 @@
             </div>
 
             <button
-              v-bind:disabled="isUploading || !isButtonClickable || isUploading || isDB" 
+              v-bind:disabled="isUploading || !isButtonClickable || isUploading || isDB"
               type="submit"
-              :class="{ disabled: isUploading || !isButtonClickable || isUploading || isDB  }"
+              :class="{ disabled: isUploading || !isButtonClickable || isUploading || isDB }"
               class="group relative h-12 w-48 overflow-hidden rounded-2xl bg-green-500 text-lg text-white font-bold text-whiteg-orange-300 px-3 py-1"
               @click.prevent="uploadFile"
             >
@@ -86,6 +86,9 @@
           </button>
           <div class="text-white">
             {{ formattedElapsedTime }}
+          </div>
+          <div class="text-white" v-if="!isHidden ">
+            {{ sortedImageData.length }} gambar
           </div>
           <div
             v-if="!isHidden"
@@ -239,12 +242,13 @@ const uploadFile = async () => {
     console.log(response.data)
     imageData.value = response.data
     isUploaded.value = true
+    isUploading.value = false
+    stopTimer()
   } catch (error) {
     console.error(error)
+    stopTimer()
     isError.value = true
   }
-  stopTimer()
-  isUploading.value = false
 }
 
 const uploadDB = async () => {
@@ -267,14 +271,15 @@ const uploadDB = async () => {
     })
     console.log(formData)
     console.log(response.data)
+    isUploading.value = false
     isUploaded.value = true
+    stopTimer()
   } catch (error) {
+    stopTimer()
     console.error(error)
     isError.value = true
   }
   // }
-  isUploading.value = false
-  stopTimer()
 }
 
 const formattedElapsedTime = computed(() => {
