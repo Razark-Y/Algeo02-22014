@@ -41,9 +41,9 @@
             </div>
 
             <button
-              v-bind:disabled="!isButtonClickable || isUploading || isDB"
+              v-bind:disabled="isUploading"
               type="submit"
-              :class="{ disabled: !isButtonClickable || isUploading || isDB }"
+              :class="{ disabled: isUploading  }"
               class="group relative h-12 w-48 overflow-hidden rounded-2xl bg-green-500 text-lg text-white font-bold text-whiteg-orange-300 px-3 py-1"
               @click.prevent="uploadFile"
             >
@@ -78,8 +78,8 @@
           <button
             type="submit"
             @click.prevent="uploadDB"
-            v-bind:disabled="!isButtonClickable || isUploading || isINPT"
-            :class="{ disabled: !isButtonClickable || isUploading || isINPT }"
+            v-bind:disabled="isUploading"
+            :class="{ disabled: isUploading }"
             class="px-4 py-2.5 bg-green-700 text-md text-white font-bold rounded-md hover:grayscale"
           >
             Upload Database
@@ -137,7 +137,7 @@ import { ref, computed } from 'vue'
 // STATE
 const isError = ref(false)
 const isUploading = ref(false)
-const isButtonClickable = ref(false)
+const isButtonClickable = ref(true)
 const isHidden = ref(true)
 const isUploaded = ref(false)
 const currentPage = ref(0)
@@ -186,7 +186,7 @@ const pagedImageData = computed(() => {
       subData = []
     }
   }
-  if ((subData.length != 0) && inLoop) {
+  if (subData.length != 0 && inLoop) {
     data.push(subData)
   }
   return data
@@ -195,7 +195,7 @@ const pagedImageData = computed(() => {
 function changeListenerAnImage(e) {
   isError.value = false
   isINPT.value = true
-  isDB.value = false
+  // isDB.value = false
   isButtonClickable.value = true
   isHidden.value = true
   imageInput.value = e.target.files[0]

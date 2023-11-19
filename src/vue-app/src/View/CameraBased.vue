@@ -1,4 +1,4 @@
-<template >
+<template>
   <div id="background" class="bg-[#792133] min-h-screen">
     <div class="flex flex-col justify-center items-center gap-8 mb-4 pt-[8rem]">
       <div class="flex gap-5">
@@ -14,7 +14,7 @@
           </form>
         </div>
       </div>
-  
+
       <div id="addDatabase">
         <form method="POST" enctype="multipart/form-data">
           <div class="flex flex-row gap-4 items-center h-fit">
@@ -43,8 +43,8 @@
               Upload Database
             </button>
             <label for="toogleButton" class="flex flex-col gap-1 items-center cursor-pointer">
-              <div v-if="!tipeInput" class="px-2 font-thin">Color</div>
-              <div v-else class="px-2 font-thin">Texture</div>
+              <div v-if="!tipeInput" class="px-2 font-medium text-lg text-white">Color</div>
+              <div v-else class="px-2 font-medium text-lg text-white">Texture</div>
               <div class="relative">
                 <input
                   @click="changeUrl"
@@ -72,7 +72,7 @@
           </div>
         </form>
       </div>
-  
+
       <div class="flex flex-row flex-wrap justify-center gap-8 mx-40 max-w-2xl">
         <Gambar
           v-for="(value, key) in pagedImageData[currentPage]"
@@ -80,7 +80,7 @@
           :img-json="value"
         ></Gambar>
       </div>
-  
+
       <Paginate
         v-if="pagedImageData.length != 0"
         :page-count="pagedImageData.length"
@@ -156,7 +156,7 @@ const pagedImageData = computed(() => {
       subData = []
     }
   }
-  if ((subData.length != 0) && inLoop) {
+  if (subData.length != 0 && inLoop) {
     data.push(subData)
   }
   return data

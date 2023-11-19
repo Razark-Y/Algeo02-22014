@@ -10,14 +10,18 @@
           class="py-1 hover:bg-[#792133] w-[650px] pl-[15px] rounded-[30px] transition"
           >Manual User Input Reverse Image Search</a
         >
-        <a href="#section2" class="py-1 hover:bg-[#792133] w-[650px] pl-[15px] rounded-[30px] transition"
+        <a
+          href="#section2"
+          class="py-1 hover:bg-[#792133] w-[650px] pl-[15px] rounded-[30px] transition"
           >Web Scrapping Reverse Image Search</a
         >
-        <a href="#section3" class="py-1 hover:bg-[#792133] w-[650px] pl-[15px] rounded-[30px] transition"
+        <a
+          href="#section3"
+          class="py-1 hover:bg-[#792133] w-[650px] pl-[15px] rounded-[30px] transition"
           >Camera Input Reverse Image Search</a
         >
       </div>
-      <div class="Tools-Block ">
+      <div class="Tools-Block">
         <h1 className="text-[#792133] font-Merriweather text-[40px] font-black">
           Programming Languages
         </h1>
@@ -47,45 +51,74 @@
       </div>
     </div>
     <div class="Manual-Container mx-[60px] my-[30px] pb-[40px]">
-      <p class="text-[#EF6E4E] font-Merriweather text-[40px] font-black mb-[20px]">Content-Based Image Retrieval</p>
-      <p class="text-[#ffddd2] font-Merriweather text-[28px] font-black "  >Content-Based Image Retrieval (CBIR) is a technology at the forefront of digital image search and retrieval. Unlike traditional methods that rely on textual annotations or keywords to find images, CBIR uses the actual content of the images to conduct the search. This "content" refers to various visual features of the image such as color, texture, shape, and spatial layout.</p>
+      <p class="text-[#EF6E4E] font-Merriweather text-[40px] font-black mb-[20px]">
+        Content-Based Image Retrieval
+      </p>
+      <p class="text-[#ffddd2] font-Merriweather text-[28px] font-black">
+        Content-Based Image Retrieval (CBIR) is a technology at the forefront of digital image
+        search and retrieval. Unlike traditional methods that rely on textual annotations or
+        keywords to find images, CBIR uses the actual content of the images to conduct the search.
+        This "content" refers to various visual features of the image such as color, texture, shape,
+        and spatial layout.
+      </p>
     </div>
     <div class="Manual-input mx-[60px] my-[50px] pb-[40px]" id="section1">
-      <h1 class="text-[#EF6E4E] font-Merriweather text-[40px] font-black mb-[20px]">Manual User Input Image Search</h1>
+      <h1 class="text-[#EF6E4E] font-Merriweather text-[40px] font-black mb-[20px]">
+        Manual User Input Image Search
+      </h1>
       <div class="Steps text-[#ffddd2] font-Merriweather text-[32px] font-black mb-[20px]">
-      <p>1. Select the image you want to search in the image-box</p>
-      <p>2. Press input dataset and select the dataset you want to upload, then press upload dataset</p>
-      <p >3. Pick your search preference (color/teksture)</p>
-      <p>4. Press the search button and wait patiently</p>
-      <p>5. Set of images with high similarity will show in a minute</p>
-      <p>6. If you would like to use another dataset, press the input dataset button and enter a new one</p>
-      <p>7. After inputing a new dataset, page will refresh, meaning dataset is uploaded</p>
-      <p>8. Now repeat the process to find high similarity images</p>
+        <p>1. Select the image you want to search in the image-box</p>
+        <p>
+          2. Press input dataset and select the dataset you want to upload, then press upload
+          dataset
+        </p>
+        <p>3. Pick your search preference (color/teksture)</p>
+        <p>4. Press the search button and wait patiently</p>
+        <p>5. Set of images with high similarity will show in a minute</p>
+        <p>
+          6. If you would like to use another dataset, press the input dataset button and enter a
+          new one
+        </p>
+        <p>7. After inputing a new dataset, page will refresh, meaning dataset is uploaded</p>
+        <p>8. Now repeat the process to find high similarity images</p>
+      </div>
     </div>
+    <div class="Second-Set bg-[#ffddd2] pt-[30px]" id="section2">
+      <div class="Manual-input mx-[60px] my-[30px] pb-[40px]">
+        <h1 class="text-[#EF6E4E] font-Merriweather text-[40px] font-black mb-[20px]">
+          Web Scrapping Reverse Image Search
+        </h1>
+        <div class="Steps text-[#792133] font-Merriweather text-[32px] font-black mb-[20px]">
+          <p>1. Enter the website link you would like to make as your datasets</p>
+          <p>2. Select the image you want to search in the image-box</p>
+          <p>3. Press the Scrap it! button and wait patiently</p>
+          <p>
+            4. Press the Search button and wait patiently, you can also choose your preference
+            (color/teksture)
+          </p>
+          <p>5. Set of images with high similarity will show in a minute</p>
+          <p>
+            6. If you would like to use another dataset, enter a new website link and repeat the
+            process
+          </p>
+        </div>
+      </div>
+      <div class="Manual-input mx-[60px] my-[30px] pb-[40px]">
+        <h1 class="text-[#EF6E4E] font-Merriweather text-[40px] font-black mb-[20px]">
+          Camera Input Reverse Image Search
+        </h1>
+        <div class="Steps text-[#792133] font-Merriweather text-[32px] font-black mb-[20px]">
+          <p>1. Make sure your device is connected with a webcam</p>
+          <p>
+            2. Press input dataset and select the dataset you want to upload, then press upload
+            dataset
+          </p>
+          <p id="section3">3. Pick your search preference (color/teksture)</p>
+          <p>4. Wait patiently as the camera will consistently take picture of you</p>
+          <p>5. Set of images with high similarity will show over time</p>
+        </div>
+      </div>
     </div>
-    <div class="Second-Set bg-[#ffddd2] pt-[30px] " id="section2">
-    <div class="Manual-input mx-[60px] my-[30px] pb-[40px]" >
-      <h1 class="text-[#EF6E4E] font-Merriweather text-[40px] font-black mb-[20px]">Web Scrapping Reverse Image Search</h1>
-      <div class="Steps text-[#792133] font-Merriweather text-[32px] font-black mb-[20px]" >
-      <p>1. Enter the website link you would like to make as your datasets</p>
-      <p>2. Select the image you want to search in the image-box</p>
-      <p >3. Press the Scrap it! button and wait patiently</p>
-      <p>4. Press the Search button and wait patiently, you can also choose your preference (color/teksture)</p>
-      <p>5. Set of images with high similarity will show in a minute</p>
-      <p>6. If you would like to use another dataset, enter a new website link and repeat the process</p>
-    </div>
-    </div>
-    <div class="Manual-input mx-[60px] my-[30px] pb-[40px] " >
-      <h1 class="text-[#EF6E4E] font-Merriweather text-[40px] font-black mb-[20px]">Camera Input Reverse Image Search</h1>
-      <div class="Steps text-[#792133] font-Merriweather text-[32px] font-black mb-[20px]">
-      <p>1. Make sure your device is connected with a webcam</p>
-      <p>2. Press input dataset and select the dataset you want to upload, then press upload dataset</p>
-      <p id="section3">3. Pick your search preference (color/teksture)</p>
-      <p>4. Wait patiently as the camera will consistently take picture of you</p>
-      <p>5. Set of images with high similarity will show over time</p>
-    </div>
-    </div>
-  </div>
   </div>
 </template>
 
@@ -94,21 +127,21 @@ export default {
   name: 'YourComponentName', // Replace with your component's name
 
   mounted() {
-    this.addSmoothScrolling();
+    this.addSmoothScrolling()
   },
 
   methods: {
     addSmoothScrolling() {
-      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
         anchor.addEventListener('click', function (e) {
-          e.preventDefault();
-          const target = document.querySelector(this.getAttribute('href'));
+          e.preventDefault()
+          const target = document.querySelector(this.getAttribute('href'))
           if (target) {
-            target.scrollIntoView({ behavior: 'smooth' });
+            target.scrollIntoView({ behavior: 'smooth' })
           }
-        });
-      });
+        })
+      })
     }
   }
-};
+}
 </script>

@@ -1,13 +1,7 @@
 <template>
-  <!-- <div class="relative">
-        <img :src="getImageURL(imgJson['imageTitle'])" alt="" class="w-40 h-40">
-        <div class="absolute text-sm font-semibold text-white bottom-4 left-1/2 -translate-x-1/2">
-            {{ imgJson['similarity'] }}
-        </div>
-    </div> -->
   <div
     class="w-40 h-40 bg-cover flex justify-center items-end rounded-lg overflow-clip shadow-lg"
-    :style="`background-image: url(${getImageURL(imgJson['imageTitle'])});`"
+    :style="`background-image: url(${imageData});`"
   >
     <div
       class="text-center text-sm font-semibold text-white w-full pb-1.5 pt-1"
@@ -19,13 +13,17 @@
 </template>
 
 <script setup>
-defineProps({
+import {ref,onMounted,toRefs} from 'vue'
+const props = defineProps({
   imgJson: Object
 })
 
-function getImageURL(name) {
-  return new URL(`../../../flask-app/database/${name}`, import.meta.url).href
-}
+const {imgJson} = toRefs(props)
+
+const imageData = ref()
+onMounted(()=>{
+  imageData.value = `data:image/jpeg;base64,${imgJson.value['imageTitle']}`
+})
 </script>
 
 <style scoped></style>

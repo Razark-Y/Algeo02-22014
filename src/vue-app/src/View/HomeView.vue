@@ -18,7 +18,11 @@
       >
         A project done by Kosu Salted Caramel, <i>Bandung Institute of Technology.</i>
       </h2>
-      <router-link to="/ImageBased" class="bg-[#e09f3e] px-5 py-2 text-3xl font-semibold rounded-lg hover:bg-[#ffddd2]">Try it now!</router-link>
+      <router-link
+        to="/ImageBased"
+        class="bg-[#e09f3e] px-5 py-2 text-3xl font-semibold rounded-lg hover:bg-[#ffddd2]"
+        >Try it now!</router-link
+      >
     </div>
   </div>
 </template>

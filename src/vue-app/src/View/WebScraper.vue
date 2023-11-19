@@ -22,8 +22,8 @@
           <div class="flex flex-col items-center">
             <div class="flex flex-col justify-end mb-3">
               <label for="toogleButton" class="flex flex-col gap-1 items-center cursor-pointer">
-                <div v-if="!tipeInput" class="px-2 font-thin">Color</div>
-                <div v-else class="px-2 font-thin">Texture</div>
+                <div v-if="!tipeInput" class="px-2 font-medium text-lg text-white">Color</div>
+                <div v-else class="px-2 font-medium text-lg text-white">Texture</div>
                 <div class="relative">
                   <input
                     @click="changeUrl"
@@ -133,11 +133,11 @@ const currentPage = ref(0)
 const tipeInput = ref(false)
 const elapsedTime = ref(0)
 const timer = ref(undefined)
-const urlToSend = ref('http://127.0.0.1:5000/uploadColor')
 const isDB = ref(false)
 const isINPT = ref(false)
 
 // DATA
+const urlToSend = ref('http://127.0.0.1:5000/uploadColor')
 const urlScrap = ref()
 const imageInput = ref([])
 const imageData = ref([])
@@ -175,7 +175,7 @@ const pagedImageData = computed(() => {
       subData = []
     }
   }
-  if ((subData.length != 0)  && inLoop) {
+  if (subData.length != 0 && inLoop) {
     data.push(subData)
   }
   return data
@@ -227,6 +227,7 @@ const uploadDB = async () => {
   isUploaded.value = false
   console.log(urlToSend.value)
   try {
+    // eslint-disable-next-line no-unused-vars
     const response = await axios
       .post('http://127.0.0.1:5000/uploadScrap', { string: urlScrap.value })
       .then((response) => {

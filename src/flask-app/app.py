@@ -53,11 +53,14 @@ def cbir_color_list():
             filename = secure_filename(image.filename)
             for fileDB in os.listdir('database') :
                 imageDB_result = createHistogram("cache.json","database/"+fileDB)
-                dataObject = {
-                    'imageTitle': fileDB,
-                    'similarity': calculate_weighted_cosine_similarity(imageinput_result,imageDB_result)
-                }
-                data.append(dataObject)
+                with open("database/"+fileDB, 'rb') as f:
+                    image_data = f.read()
+                    base64_data = base64.b64encode(image_data).decode('utf-8')
+                    dataObject = {
+                        'imageTitle': base64_data,
+                        'similarity': calculate_weighted_cosine_similarity(imageinput_result,imageDB_result)
+                    }
+                    data.append(dataObject)
     return jsonify(data)
 
 # Router for CBIR - Colour with Camera Feed
