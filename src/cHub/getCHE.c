@@ -134,15 +134,13 @@ double compareImage(char* path1, char* path2){
 int main(int argc, char *argv[] ){
     FILE *fp;
     char* output1;
-    char* output2;
-    char* output3;
 
     int x1, y1, n1;
     unsigned char *data1 = stbi_load(argv[1], &x1, &y1, &n1, 3);
     double v1[3];
     getCHE(data1, x1, y1, &v1[0], &v1[1], &v1[2]);
 
-    snprintf(output1, 30, "%f %f %f", v1[0], v1[1], v1[2]);
+    snprintf(output1, 50, "%f %f %f", v1[0], v1[1], v1[2]);
     fp = fopen("txt/CHEresult.txt", "w");
     fprintf(fp, output1);
 }

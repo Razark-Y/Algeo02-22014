@@ -155,12 +155,12 @@ int main(int argc, char *argv[]){
     size_t len = 0;
 
     double v2[3];
-    char decoy[100];
-    char filename[100];
+    char decoy[300];
+    char filename[300];
 
     fds = fopen("txt/CHE.txt", "r");
 
-    while (fgets (decoy, 100, fds)) {
+    while (fgets (decoy, 200, fds)) {
         // printf("%s", decoy);
         sscanf(decoy, "%lf %lf %lf %s", &v2[0], &v2[1], &v2[2], filename);
         double similarity = cosineSimilarity(v1, v2, 3);

@@ -157,7 +157,7 @@ int main(int argc, char *argv[] ){
         }
         else{
             char* dir = ep -> d_name;
-            char theDirectory[200];
+            char theDirectory[300];
             sprintf(theDirectory, "%s/%s", argv[1], dir);
 
             unsigned char *data1 = stbi_load(theDirectory, &x1, &y1, &n1, 3);
